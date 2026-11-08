@@ -1,0 +1,1195 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Key Handpan</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=DM+Mono:wght@400;500&family=Reenie+Beanie&display=swap">
+<style>
+/* Layout concept: a dark gallery wall. A scroll scene writes KEY by hand and fills it with a torn-paper photo montage;
+   below it, dark sections alternate with torn paper strips. Photos sit in ripped frames, montages play on canvas. */
+:root {
+  --bg: #0C0C0D; --fg: #EFEBE2; --muted: #A8A396; --line: rgba(239, 235, 226, 0.24);
+  --paper: #E8E4DA; --paper-ink: #141414; --paper-mute: #55524A; --fringe: #F7F4EC;
+  --accent: #F2B632; --accent-p: #8A4B00; --accent-ink: #1A1405; --veil: rgba(12, 12, 13, 0.82);
+  --font-ui: "Bricolage Grotesque", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "DM Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --font-hand: "Reenie Beanie", "Segoe Script", cursive;
+  --sun: #F2B632; --sun-ink: #1A1405;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #E8E4DA; --fg: #121212; --muted: #5A574F; --line: rgba(18, 18, 18, 0.26);
+    --paper: #F7F4EC; --paper-ink: #141414; --paper-mute: #55524A; --fringe: #FFFFFF;
+    --accent: #9A5B00; --accent-p: #8A4B00; --accent-ink: #FFFFFF; --veil: rgba(232, 228, 218, 0.86);
+    color-scheme: light;
+  }
+}
+:root[data-theme="light"] {
+  --bg: #E8E4DA; --fg: #121212; --muted: #5A574F; --line: rgba(18, 18, 18, 0.26);
+  --paper: #F7F4EC; --paper-ink: #141414; --paper-mute: #55524A; --fringe: #FFFFFF;
+  --accent: #9A5B00; --accent-p: #8A4B00; --accent-ink: #FFFFFF; --veil: rgba(232, 228, 218, 0.86);
+  color-scheme: light;
+}
+body { background: var(--bg); color: var(--fg); font-family: var(--font-ui); font-size: 17px; line-height: 1.55; overflow-x: clip; }
+html { scroll-behavior: smooth; }
+h1, h2, h3, p { margin: 0; }
+a { color: inherit; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+a:focus-visible, button:focus-visible, input:focus-visible, .deck:focus-visible, .tf:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.mono { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; }
+.gut { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.inner { max-width: 1100px; margin: 0 auto; min-width: 0; }
+
+/* ---------- torn paper pieces ---------- */
+.tear { position: relative; display: block; margin: 0; transform: rotate(var(--r, 0deg)); filter: drop-shadow(0 10px 16px rgba(0, 0, 0, 0.4)); }
+.tear-f { position: absolute; inset: -9px; background: var(--fringe); visibility: hidden; }
+.tear.ready .tear-f { visibility: visible; }
+.tear-i { position: relative; display: block; width: 100%; height: auto; }
+.rip { position: absolute; left: 0; width: 100%; height: 36px; display: block; pointer-events: none; }
+.rip-top { top: -35px; }
+.rip-bot { bottom: -35px; transform: scaleY(-1); }
+.rf { fill: var(--fringe); } .rb { fill: var(--paper); }
+.paper { position: relative; z-index: 3; background: var(--paper); color: var(--paper-ink); --shade: var(--accent-p); }
+
+/* ---------- hero scene ---------- */
+.scene { height: 420vh; position: relative; }
+.stage {
+  position: sticky; top: env(safe-area-inset-top, 0px); overflow: hidden; background: var(--bg);
+  height: calc(100vh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+  height: calc(100svh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+}
+#cv { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.sub { position: absolute; left: 0; right: 0; text-align: center; font-family: var(--font-hand); font-size: clamp(30px, 6vw, 56px); line-height: 1; color: var(--accent); pointer-events: none; }
+.hud { position: absolute; left: 0; right: 0; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding-block: 14px; pointer-events: none;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.hud.top { top: 0; } .hud.bottom { bottom: 0; }
+.pill { pointer-events: auto; background: var(--veil); color: var(--fg); border-radius: 999px; padding: 6px 14px; text-decoration: none; border: 1px solid var(--line); }
+a.pill:hover { border-color: var(--accent); }
+.hint { position: absolute; left: 0; right: 0; bottom: 28px; text-align: center; color: var(--muted); pointer-events: none; }
+.btn { pointer-events: auto; cursor: pointer; font: inherit; font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;
+  background: var(--accent); color: var(--accent-ink); border: 1px solid transparent; border-radius: 999px; padding: 8px 18px; min-height: 36px; text-decoration: none; display: inline-flex; align-items: center; }
+.btn:hover { filter: brightness(1.08); }
+.btn2 { cursor: pointer; font: inherit; font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; background: transparent; color: inherit;
+  border: 1px solid currentColor; border-radius: 999px; padding: 8px 18px; min-height: 36px; text-decoration: none; display: inline-flex; align-items: center; opacity: 0.9; }
+.btn2:hover, .btn2[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); opacity: 1; }
+.paper .btn2:hover { background: var(--accent-p); color: #fff; border-color: var(--accent-p); }
+.row { display: flex; gap: 12px; flex-wrap: wrap; }
+
+/* ---------- word wall + three doors ---------- */
+.work { position: relative; --sh: calc(100svh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)); }
+.wall { position: sticky; top: env(safe-area-inset-top, 0px); height: var(--sh); overflow: hidden; z-index: 0; }
+.wall-text { position: relative; margin: 0; height: 100%; overflow: hidden; box-sizing: border-box; padding-block: 2vh; font-weight: 800; font-size: clamp(44px, 12vw, 160px);
+  line-height: 0.92; letter-spacing: -0.035em; text-transform: uppercase; word-spacing: 0.1em; color: color-mix(in srgb, var(--fg) calc(var(--wo, 1) * 100%), transparent);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.pr-w { position: relative; display: inline-block; opacity: 0; transition: opacity 0.2s, transform 0.12s, color 0.12s; }
+.pr-w::after { content: "."; position: absolute; left: 100%; bottom: 0; margin-left: -0.06em; color: var(--accent); opacity: 0; }
+.pr-on { opacity: 1; }
+.pr-stomp { transform: translateY(3px) scale(1.04); color: var(--accent); }
+.pr-stomp::after { opacity: 1; }
+.projects { position: relative; z-index: 1; margin-top: calc(-1 * var(--sh)); padding-block: 26vh 30vh; }
+.projects-inner { max-width: 1100px; margin: 0 auto; display: grid; gap: 22vh; min-width: 0; }
+.wall-title { justify-self: start; background: var(--veil); padding: 16px 20px; max-width: 32ch; border-radius: 4px; }
+.wall-title h2 { font-size: clamp(28px, 4.6vw, 44px); line-height: 1.05; letter-spacing: -0.02em; text-wrap: balance; margin-bottom: 6px; }
+.wall-title p { color: var(--muted); font-size: 15px; }
+.wtile { display: grid; gap: 16px; width: min(460px, 100%); padding: 18px; box-sizing: border-box; background: var(--veil); text-decoration: none; border: 1px solid var(--line); border-radius: 4px; }
+.wtile:nth-of-type(odd) { justify-self: end; }
+.wtile-art { display: block; padding: 10px; }
+.wtile .tear-i { aspect-ratio: 4 / 3; object-fit: cover; height: auto; }
+.wtile-body { display: grid; gap: 3px; }
+.lt { transition: color .45s ease; }
+.tip { position: fixed; z-index: 30; top: 50%; width: min(340px, 28vw); padding: 20px 22px; box-sizing: border-box; background: var(--veil); border: 1px solid var(--line); border-radius: 4px; pointer-events: none; opacity: 0; transform: translateY(-46%); transition: opacity .3s ease, transform .4s cubic-bezier(.22,1,.36,1); }
+.tip.on { opacity: 1; transform: translateY(-50%); }
+.tip .mono { color: var(--accent-p); }
+.tip h3 { font-size: 24px; letter-spacing: -0.02em; line-height: 1.1; margin: 6px 0 10px; }
+.tip p { color: var(--muted); font-size: 15px; line-height: 1.5; margin: 0 0 8px; }
+.tip ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 4px; font-size: 14px; }
+.tip li::before { content: "– "; color: var(--accent-p); }
+@media (max-width: 980px), (hover: none) { .tip { display: none; } }
+.lt.hi { color: var(--accent) !important; }
+.wtile-body strong { font-size: 28px; letter-spacing: -0.02em; line-height: 1.1; }
+.wtile-body span:last-child { color: var(--muted); font-size: 15px; }
+.wtile:hover { border-color: var(--accent); }
+@keyframes wtile-hop { 0% { transform: translateY(0); } 30% { transform: translateY(-14px) rotate(-1.2deg); } 55% { transform: translateY(0) rotate(0); } 72% { transform: translateY(-5px); } 100% { transform: translateY(0); } }
+.wtile:hover .wtile-art, .wtile:focus-visible .wtile-art { animation: wtile-hop 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.15s; }
+
+/* ---------- content sections ---------- */
+.sec { position: relative; padding-block: 110px; }
+.sec h2 { font-size: clamp(40px, 8vw, 92px); line-height: 0.98; letter-spacing: -0.035em; font-weight: 800; text-wrap: balance; }
+.sec .lede { font-size: clamp(18px, 2.2vw, 22px); max-width: 52ch; color: var(--muted); }
+.paper .lede, .paper p { color: var(--paper-ink); }
+.split { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 56px 48px; align-items: center; min-width: 0; }
+.col { display: grid; gap: 28px; min-width: 0; align-content: start; }
+.cluster { position: relative; display: grid; min-width: 0; padding: 10px 14px 40px 10px; }
+.cluster .tear:first-child { width: 82%; }
+.cluster .tear + .tear { width: 52%; margin: -22% 0 0 auto; }
+.st { position: relative; --shade: var(--accent); width: fit-content; max-width: calc(100% - 0.4em); padding-bottom: 0.08em; }
+.col > :not(.st) { position: relative; }
+.st.ready { color: transparent; }
+@property --wipe { syntax: "<length>"; inherits: false; initial-value: 0px; }
+.st-cv { position: absolute; left: 0; top: 0; pointer-events: none; --wipe: 0px; --wipe-max: 900px; --sh-h: 100px;
+  clip-path: polygon(0 0, var(--wipe) 0, calc(var(--wipe) - var(--sh-h)) 100%, 0 100%); transition: --wipe 1.2s cubic-bezier(0.22, 1, 0.36, 1); }
+.st-cv.on { --wipe: var(--wipe-max); }
+.dw { display: inline-block; white-space: nowrap; }
+.dc { display: inline-block; text-align: center; white-space: pre; }
+.dc.off { visibility: hidden; }
+.dc.scr { color: var(--accent-p); font-family: var(--font-mono); }
+.pillars { display: grid; gap: 12px; list-style: none; padding: 0; margin: 0; }
+.pillars li { display: flex; gap: 14px; align-items: baseline; border-top: 1.5px solid currentColor; padding-top: 10px; }
+.pillars .mono { min-width: 3.2ch; opacity: 0.75; }
+.pillars strong { font-size: clamp(22px, 3vw, 30px); letter-spacing: -0.02em; line-height: 1.1; }
+.hand { font-family: var(--font-hand); font-size: clamp(30px, 5vw, 46px); line-height: 1; color: var(--accent); }
+.paper .hand { color: var(--accent-p); }
+
+/* ---------- stacked offer cards (scroll wrapper, hover child) ---------- */
+.stack-list { position: relative; display: grid; min-width: 0; padding-bottom: 8vh; }
+.scard-w { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 12vh + var(--i, 0) * 18px); padding-bottom: 7vh; min-width: 0; }
+.scard { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 26px; align-items: center; padding: 22px; background: var(--paper); color: var(--paper-ink);
+  border-radius: 4px; transform-origin: 50% 0; will-change: transform; box-shadow: 0 14px 34px rgba(0, 0, 0, 0.35); }
+.scard-img { width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; display: block;
+  clip-path: polygon(0 3%, 8% 0, 20% 4%, 35% 0, 52% 3%, 70% 0, 86% 4%, 100% 0, 98% 30%, 100% 55%, 97% 80%, 100% 100%, 80% 97%, 60% 100%, 40% 96%, 22% 100%, 8% 97%, 0 100%, 2% 70%, 0 40%); }
+.scard:hover .scard-img { animation: wtile-hop 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.15s; }
+.scard .mono { color: var(--accent-p); }
+.scard h3 { font-size: clamp(26px, 3.6vw, 38px); letter-spacing: -0.025em; line-height: 1.05; margin: 4px 0 10px; text-wrap: balance; }
+.scard p { color: var(--paper-ink); max-width: 46ch; }
+@media (max-width: 560px) { .scard { grid-template-columns: 1fr; gap: 16px; } .scard-img { aspect-ratio: 16 / 9; } }
+
+/* ---------- unfolding panel ---------- */
+.unfold { position: relative; z-index: 2; clip-path: inset(0 0 -40px 0); padding-block: 120px; }
+.unfold-panel { position: absolute; inset: 0; background: var(--sun); will-change: transform; }
+.unfold-panel .rf { fill: var(--fringe); } .unfold-panel .rb { fill: var(--sun); }
+.unfold-text { position: relative; color: var(--sun-ink); opacity: 0; }
+.unfold .lede { color: var(--sun-ink); max-width: 34ch; font-size: clamp(22px, 3vw, 32px); line-height: 1.25; font-weight: 500; }
+.unfold .hand { color: var(--sun-ink); }
+.unfold h2 { max-width: 14ch; }
+.unfold .pillars strong { font-size: clamp(20px, 2.6vw, 28px); }
+
+/* ---------- instrument ---------- */
+.pan { position: relative; width: min(100%, 440px); aspect-ratio: 1; margin: 0 auto; border-radius: 50%; touch-action: none; user-select: none; -webkit-user-select: none;
+  background: radial-gradient(circle at 35% 28%, #6c7077 0%, #34373d 46%, #1a1c20 100%); box-shadow: 0 24px 50px rgba(0, 0, 0, 0.5), inset 0 0 0 6px #23252a, inset 0 0 0 8px #565a62; }
+.tf { position: absolute; transform: translate(-50%, -50%); border: 0; padding: 0; cursor: pointer; border-radius: 50%; width: 21%; aspect-ratio: 1.12; color: #E9E4D8;
+  background: radial-gradient(circle at 38% 30%, #8a8f97 0%, #4b4f56 55%, #2a2c31 100%); box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.6), 0 1px 0 rgba(255, 255, 255, 0.25);
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.04em; display: grid; place-items: center; touch-action: none; }
+.tf.ding { width: 27%; aspect-ratio: 1; }
+.tf:hover { filter: brightness(1.18); }
+@keyframes hit { 0% { box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.6), 0 0 0 0 rgba(242, 182, 50, 0.85); transform: translate(-50%, -50%) scale(0.94); }
+  100% { box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.6), 0 0 0 26px rgba(242, 182, 50, 0); transform: translate(-50%, -50%) scale(1); } }
+.tf.hit { animation: hit 0.6s ease-out; }
+
+/* ---------- montages ---------- */
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 56px 32px; min-width: 0; }
+.mcard { display: grid; gap: 14px; min-width: 0; align-content: start; }
+.mcard canvas { aspect-ratio: 4 / 5; height: auto; background: #000; }
+.mcard h3 { font-size: 26px; letter-spacing: -0.02em; line-height: 1.1; }
+.mcard p { color: var(--muted); font-size: 15px; }
+
+/* ---------- deck ---------- */
+.deck-wrap { display: grid; gap: 18px; justify-items: center; min-width: 0; }
+.deck { position: relative; width: min(100%, 340px); aspect-ratio: 4 / 5; margin-bottom: 36px; touch-action: pan-y; border-radius: 6px; }
+.dcard { position: absolute; inset: 0; border-radius: 6px; overflow: hidden; background: #111; cursor: grab; user-select: none; -webkit-user-select: none; touch-action: pan-y; will-change: transform; box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45); }
+.dcard:active { cursor: grabbing; }
+.dcard img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; -webkit-user-drag: none; }
+.dcap { position: absolute; left: 12px; bottom: 12px; max-width: calc(100% - 24px); background: var(--paper); color: var(--paper-ink); padding: 6px 12px 8px; transform: rotate(-1.5deg);
+  font-family: var(--font-hand); font-size: 26px; line-height: 1; clip-path: polygon(0 4%, 6% 0, 14% 5%, 25% 0, 40% 4%, 55% 0, 70% 5%, 85% 0, 100% 4%, 98% 50%, 100% 96%, 82% 100%, 60% 95%, 40% 100%, 20% 96%, 0 100%, 2% 50%); }
+
+/* ---------- ticker + footer ---------- */
+.ticker { position: relative; z-index: 5; background: var(--fg); color: var(--bg); overflow: hidden; overflow-x: clip; overflow-y: visible; transition: background-color 0.4s; cursor: pointer; }
+.ticker.is-falling { background-color: transparent; cursor: default; }
+.ticker-track { display: flex; width: max-content; padding-block: 14px; font-size: clamp(22px, 4vw, 34px); font-weight: 800; letter-spacing: 0.04em; line-height: 1.1; white-space: nowrap; animation: tick 46s linear infinite; }
+.ticker-half { display: flex; flex: none; }
+@keyframes tick { to { transform: translateX(-50%); } }
+.ch { display: inline-block; white-space: pre; transition: color 0.3s; }
+.heart { color: var(--accent-p); font-variant-emoji: text; }
+.ticker.is-falling .ch { color: var(--fg); }
+.ticker.is-falling .heart { color: var(--accent); }
+.ticker-x { position: absolute; top: 50%; transform: translateY(-50%); right: max(16px, env(safe-area-inset-right, 0px)); cursor: pointer; background: var(--bg); color: var(--fg); border: 0; border-radius: 999px; padding: 6px 14px;
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; }
+footer { padding-block: 72px 56px; }
+.foot { max-width: 1100px; margin: 0 auto; display: grid; gap: 28px; min-width: 0; }
+.tw-ch { opacity: 0; } .tw-ch[data-on] { opacity: 1; }
+.tw-caret { display: inline-block; width: 3px; height: 0.95em; background: var(--accent); vertical-align: -0.1em; margin-left: 2px; }
+#tw { font-size: clamp(26px, 5vw, 52px); font-weight: 800; letter-spacing: -0.03em; line-height: 1.05; max-width: 20ch; text-wrap: balance; }
+.links { display: flex; flex-wrap: wrap; gap: 12px; }
+.small { color: var(--muted); font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; }
+
+/* ---------- chaos on the word wall letters ---------- */
+.lt { display: inline-block; position: relative; will-change: transform, opacity; }
+.dup { position: absolute; left: 0; top: 0; pointer-events: none; opacity: 0; animation: jit var(--d, 0.5s) steps(1, end) infinite; animation-delay: var(--dl, 0s); }
+.dup.acc { color: var(--accent); }
+.lt.multi .dup { opacity: var(--o, 0.5); }
+@keyframes jit {
+  0%, 100% { transform: translate(var(--x0), var(--y0)) rotate(var(--r0)) scale(var(--s0)); }
+  20% { transform: translate(var(--x1), var(--y1)) rotate(var(--r1)) scale(var(--s1)); }
+  40% { transform: translate(var(--x2), var(--y2)) rotate(var(--r2)) scale(var(--s2)); }
+  60% { transform: translate(var(--x3), var(--y3)) rotate(var(--r3)) scale(var(--s3)); }
+  80% { transform: translate(var(--x4), var(--y4)) rotate(var(--r4)) scale(var(--s4)); }
+}
+
+/* ---------- background inlays ---------- */
+.page { position: relative; z-index: 1; }
+.decor { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+.ghost { position: absolute; left: 0; white-space: nowrap; font-weight: 800; text-transform: uppercase; letter-spacing: -0.03em; line-height: 0.8;
+  font-size: clamp(120px, 24vw, 340px); color: var(--fg); opacity: 0.045; will-change: transform; }
+.ghost-block { position: absolute; left: 0; top: 0; background: var(--accent); opacity: 0.1; box-shadow: 0 0 50px rgba(0, 0, 0, 0.3); will-change: transform; }
+.note { position: absolute; left: 0; top: 0; color: var(--accent); opacity: 0.16; will-change: transform; }
+.arcs { position: absolute; inset: 0; width: 100%; height: 100%; will-change: transform; }
+.arcs path, .arcs circle { fill: none; vector-effect: non-scaling-stroke; }
+.pan3d { position: absolute; left: 0; top: 0; will-change: transform; }
+.pan3d canvas { display: block; width: 100%; height: 100%; }
+.emo { position: fixed; z-index: 6; pointer-events: none; line-height: 1; opacity: 0; will-change: transform, opacity;
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .scene { height: auto; }
+  .stage { position: relative; top: 0; height: 80vh; height: 80svh; }
+  .wtile:hover .wtile-art, .wtile:focus-visible .wtile-art { animation: none; }
+  .pr-w, .dcard { transition: none !important; }
+  .ticker-track { animation: none; }
+  .st-cv { transition: none; }
+  .tw-caret { display: none; }
+  .tf.hit { animation: none; }
+  .scard-w { position: relative; top: auto; }
+  .scard:hover .scard-img { animation: none; }
+  .unfold-panel { transform: none !important; }
+  .unfold-text { opacity: 1 !important; }
+}
+</style>
+
+<section class="scene" id="scene" aria-label="Ouverture">
+  <div class="stage" id="stage">
+    <canvas id="cv" aria-hidden="true"></canvas>
+    <h1 class="sr">Key Handpan</h1>
+    <p class="sub" id="sub" aria-hidden="true">handpan · Martinique / Paris</p>
+    <div class="hud top">
+      <span class="pill mono">Key Handpan</span>
+      <a class="pill mono" href="#key">Entrer dans le site</a>
+    </div>
+    <p class="hint mono" id="hint">Fais défiler</p>
+    <div class="hud bottom" id="ctl" hidden>
+      <span class="pill mono">Martinique / Paris</span>
+      <span class="row">
+        <button type="button" class="btn" id="play1">Pause</button>
+        <button type="button" class="btn" id="snd1" aria-pressed="false">Son</button>
+      </span>
+    </div>
+  </div>
+</section>
+
+<aside class="tip" id="tip" aria-hidden="true"></aside>
+<section class="work" id="work" aria-labelledby="work-title">
+  <div class="wall" id="wall" aria-hidden="true"><p class="wall-text" id="wall-text"></p></div>
+  <div class="projects gut">
+    <div class="projects-inner">
+      <div class="wall-title">
+        <h2 id="work-title">Un humain extraordinaire</h2>
+        <p>Trois portes pour le découvrir : la musique, l'associatif, l'événementiel et la transmission.</p>
+      </div>
+      <a class="wtile" href="#key">
+        <span class="wtile-art"><span class="tear" style="--r:-1.6deg"><span class="tear-f" aria-hidden="true"></span><img class="tear-i" src="img/p2.jpg" width="1000" height="1250" alt="Key au handpan, la tête en arrière, yeux fermés, en noir et blanc" style="object-position:50% 30%"></span></span>
+        <span class="wtile-body"><span class="mono">La musique</span><strong>Key</strong><span>Handpanman entre la Martinique et Paris.</span></span>
+      </a>
+      <a class="wtile" href="#hangora">
+        <span class="wtile-art"><span class="tear" style="--r:1.4deg"><span class="tear-f" aria-hidden="true"></span><img class="tear-i" src="img/p5.jpg" width="1000" height="1250" alt="Les mains de Key sur un handpan, dans un cadre déchiré" style="object-position:70% 55%"></span></span>
+        <span class="wtile-body"><span class="mono">L'associatif</span><strong>Hangora</strong><span>Créer du lien par l'art et le son.</span></span>
+      </a>
+      <a class="wtile" href="#atempo">
+        <span class="wtile-art"><span class="tear" style="--r:-1deg"><span class="tear-f" aria-hidden="true"></span><img class="tear-i" src="img/p3.jpg" width="1000" height="1250" alt="Collage en noir et blanc : un handpan dans un cadre déchiré, un portrait aux cheveux bouclés" style="object-position:35% 70%"></span></span>
+        <span class="wtile-body"><span class="mono">L'événementiel &amp; la transmission</span><strong>Atempo Experience</strong><span>Le handpan à Paris, entre musique, bien-être et collectif.</span></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="sec gut" id="key" aria-labelledby="key-title">
+  <div class="inner split">
+    <div class="col">
+      <span class="hand">Kev</span>
+      <h2 id="key-title" class="st">Key</h2>
+      <p class="lede">Handpanman installé entre la Martinique et Paris. Co-fondateur de Hangora, handpanman chez Atempo Experience. Il donne des cours, crée des expériences musicales méditatives, se produit en performance, et fait bien plus encore. Laisse-toi emporter par la vibration du handpan.</p>
+      <div class="row">
+        <a class="btn" href="https://www.youtube.com/@Key_972" target="_blank" rel="noopener">Sa chaîne YouTube</a>
+        <a class="btn2" href="https://www.instagram.com/key_handpan/" target="_blank" rel="noopener">Instagram @key_handpan</a>
+      </div>
+    </div>
+    <div class="cluster">
+      <figure class="tear" style="--r:-2deg"><span class="tear-f" aria-hidden="true"></span><img class="tear-i" src="img/p4.jpg" width="1000" height="1250" alt="Key de profil, cheveux bouclés, un fil de rubans suspendu devant lui, en noir et blanc"></figure>
+      <figure class="tear" style="--r:3deg"><span class="tear-f" aria-hidden="true"></span><img class="tear-i" src="img/p1.jpg" width="1000" height="1250" alt="Portrait de Key, yeux baissés, un coquillage à l'oreille, t-shirt jaune et salopette en jean"></figure>
+    </div>
+  </div>
+</section>
+
+<section class="sec gut" id="offre" aria-labelledby="offre-title">
+  <div class="inner">
+    <div class="col" style="margin-bottom:56px">
+      <span class="hand">ce qu'il partage</span>
+      <h2 id="offre-title" class="st">Transmettre, apaiser, rassembler</h2>
+      <p class="lede">Key joue, mais il transmet surtout. Voici une partie de ce qu'il propose, et il y en a bien d'autres.</p>
+    </div>
+    <div class="stack-list" id="stack">
+      <div class="scard-w" style="--i:0"><article class="scard"><img class="scard-img" src="img/p2.jpg" alt="" width="1000" height="1250" style="object-position:50% 30%"><div><span class="mono">Transmettre</span><h3>Des cours de handpan</h3><p>Key donne des cours de handpan, pour entrer dans l'instrument à son rythme.</p></div></article></div>
+      <div class="scard-w" style="--i:1"><article class="scard"><img class="scard-img" src="img/p4.jpg" alt="" width="1000" height="1250" style="object-position:60% 40%"><div><span class="mono">Apaiser</span><h3>Des expériences musicales méditatives</h3><p>Des moments pensés pour ralentir, respirer et se laisser porter par le son.</p></div></article></div>
+      <div class="scard-w" style="--i:2"><article class="scard"><img class="scard-img" src="img/p1.jpg" alt="" width="1000" height="1250" style="object-position:40% 40%"><div><span class="mono">Se produire</span><h3>Des performances</h3><p>Sur scène ou en formats hybrides, le handpan en dialogue avec d'autres arts et d'autres sons.</p></div></article></div>
+      <div class="scard-w" style="--i:3"><article class="scard"><img class="scard-img" src="img/p5.jpg" alt="" width="1000" height="1250" style="object-position:70% 55%"><div><span class="mono">Rassembler</span><h3>Ateliers, jams et événements</h3><p>Avec Hangora et Atempo Experience : des rencontres ouvertes, chaleureuses et immersives.</p></div></article></div>
+      <div class="scard-w" style="--i:4"><article class="scard"><img class="scard-img" src="img/p3.jpg" alt="" width="1000" height="1250" style="object-position:35% 70%"><div><span class="mono">Et plus encore</span><h3>Toujours le même fil</h3><p>D'autres projets, d'autres rencontres, et un seul fil : le son qui relie les gens.</p></div></article></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec gut" id="instrument" aria-labelledby="inst-title">
+  <div class="inner split">
+    <div class="col">
+      <h2 id="inst-title" class="st">Une note suffit</h2>
+      <p class="lede">Un handpan, neuf notes, rien à réussir. Pose les doigts et écoute ce que ça fait.</p>
+      <p class="small" id="note-name">Ré kurd · 9 notes</p>
+    </div>
+    <div class="pan" id="pan" role="group" aria-label="Handpan en ré kurd, neuf notes"></div>
+  </div>
+</section>
+
+<section class="sec gut paper" id="hangora" aria-labelledby="han-title">
+  <svg class="rip rip-top" viewBox="0 0 1000 36" preserveAspectRatio="none" aria-hidden="true"><path class="rf"></path><path class="rb"></path></svg>
+  <div class="inner split">
+    <div class="cluster">
+      <figure class="tear" style="--r:2deg"><span class="tear-f" aria-hidden="true"></span><img class="tear-i" src="img/p5.jpg" width="1000" height="1250" alt="Les mains de Key sur un handpan, t-shirt jaune et salopette en jean"></figure>
+      <figure class="tear" style="--r:-3deg"><span class="tear-f" aria-hidden="true"></span><img class="tear-i" src="img/p3.jpg" width="1000" height="1250" alt="Collage en noir et blanc : un handpan dans un cadre déchiré, un portrait aux cheveux bouclés"></figure>
+    </div>
+    <div class="col">
+      <span class="hand">hang.ora</span>
+      <h2 id="han-title" class="st">Hangora</h2>
+      <p class="mono" style="color:var(--accent-p)">La mission : créer du lien par l'art et le son</p>
+      <p id="decode" class="lede" style="color:var(--paper-ink)">Notre objectif est de créer des expériences immersives qui rassemblent, en célébrant la beauté des sonorités variées. À travers des ateliers de Handpan, des jams sessions libres et des performances hybrides, nous invitons chacun·e à explorer sa créativité et à s'exprimer librement. Nous cultivons une communauté chaleureuse et bienveillante, où chaque événement devient un espace d'écoute, de jeu… Rejoignez-nous pour co-créer des instants de joie, de réflexion et de connexion véritable.</p>
+      <ul class="pillars">
+        <li><span class="mono">01</span><strong>Ateliers de handpan</strong></li>
+        <li><span class="mono">02</span><strong>Jams sessions libres</strong></li>
+        <li><span class="mono">03</span><strong>Performances hybrides</strong></li>
+      </ul>
+      <div class="row"><a class="btn2" href="https://www.instagram.com/hang.ora/" target="_blank" rel="noopener">Suivre @hang.ora</a></div>
+    </div>
+  </div>
+  <svg class="rip rip-bot" viewBox="0 0 1000 36" preserveAspectRatio="none" aria-hidden="true"><path class="rf"></path><path class="rb"></path></svg>
+</section>
+
+<section class="sec gut unfold" id="valeurs" aria-labelledby="val-title">
+  <div class="unfold-panel" aria-hidden="true"><svg class="rip rip-bot" viewBox="0 0 1000 36" preserveAspectRatio="none" aria-hidden="true"><path class="rf"></path><path class="rb"></path></svg></div>
+  <div class="unfold-text">
+    <div class="inner col">
+      <span class="hand">ce qui compte</span>
+      <h2 id="val-title">Le son, d'abord pour les autres</h2>
+      <p class="lede">Key tient à l'humain, à la nature, et à toutes celles et ceux qui n'ont pas la même chance que les autres. Sa musique est une main tendue : elle ne demande rien, elle rassemble.</p>
+      <ul class="pillars">
+        <li><strong>L'humain d'abord</strong></li>
+        <li><strong>La nature, toujours</strong></li>
+        <li><strong>Celles et ceux qui ont moins de chance</strong></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="sec gut" id="atempo" aria-labelledby="atempo-title">
+  <div class="inner split">
+    <div class="col">
+      <span class="hand">Paris</span>
+      <h2 id="atempo-title" class="st">Atempo Experience</h2>
+      <p class="lede">L'expérience handpan à Paris. Entre musique, bien-être et collectif. Ateliers et événements immersifs. Key y joue comme handpanman.</p>
+      <div class="row"><a class="btn2" href="https://www.instagram.com/atempo.experience/" target="_blank" rel="noopener">Suivre @atempo.experience</a></div>
+    </div>
+    <div class="cluster">
+      <figure class="tear" style="--r:1.5deg"><span class="tear-f" aria-hidden="true"></span><img class="tear-i" src="img/p3.jpg" width="1000" height="1250" alt="Collage en noir et blanc : un handpan dans un cadre déchiré, un portrait aux cheveux bouclés"></figure>
+      <figure class="tear" style="--r:-2.5deg"><span class="tear-f" aria-hidden="true"></span><img class="tear-i" src="img/p2.jpg" width="1000" height="1250" alt="Key au handpan, la tête en arrière, yeux fermés, en noir et blanc"></figure>
+    </div>
+  </div>
+</section>
+
+<section class="sec gut" id="montages" aria-labelledby="mont-title">
+  <div class="inner col" style="gap:48px">
+    <div class="col">
+      <h2 id="mont-title" class="st">Le son en images</h2>
+      <p class="lede">Des visages, des mains, de l'acier qui vibre. Trois petits films pour entrer dans son monde.</p>
+    </div>
+    <div class="cards" id="cards"></div>
+  </div>
+</section>
+
+<div class="ticker" id="ticker">
+  <div class="ticker-track" id="ticker-track" aria-hidden="true"></div>
+  <button type="button" class="ticker-x" id="ticker-x" aria-label="Fermer le bandeau">Fermer</button>
+</div>
+
+<section class="sec gut" aria-labelledby="deck-title">
+  <div class="inner split">
+    <div class="col">
+      <h2 id="deck-title" class="st">Des instants</h2>
+      <p class="lede">Un coquillage à l'oreille, la tête en arrière, les mains posées sur l'acier. Des moments volés à la musique.</p>
+    </div>
+    <div class="deck-wrap">
+      <div class="deck" id="deck" tabindex="0" role="group" aria-roledescription="pile de cartes" aria-label="Cinq photos. Flèche gauche ou droite pour lancer la carte du dessus.">
+        <div class="dcard" data-i="0"><img src="img/p1.jpg" alt="Portrait de profil, un coquillage à l'oreille" draggable="false"><span class="dcap">Un coquillage à l'oreille</span></div>
+        <div class="dcard" data-i="1"><img src="img/p2.jpg" alt="Key au handpan, la tête en arrière" draggable="false"><span class="dcap">La tête en arrière</span></div>
+        <div class="dcard" data-i="2"><img src="img/p3.jpg" alt="Kimono fleuri et handpan dans un cadre déchiré" draggable="false"><span class="dcap">Deux cadres, un handpan</span></div>
+        <div class="dcard" data-i="3"><img src="img/p4.jpg" alt="Profil, rubans suspendus devant lui" draggable="false"><span class="dcap">Des rubans dans l'air</span></div>
+        <div class="dcard" data-i="4"><img src="img/p5.jpg" alt="Les mains sur le handpan" draggable="false"><span class="dcap">Les mains sur l'acier</span></div>
+      </div>
+      <div class="row">
+        <button type="button" class="btn2" id="throw-l" aria-label="Lancer la carte vers la gauche">←</button>
+        <button type="button" class="btn2" id="throw-r" aria-label="Lancer la carte vers la droite">→</button>
+      </div>
+      <p class="small" id="deck-status" aria-live="polite">1 / 5</p>
+    </div>
+  </div>
+</section>
+
+<footer class="gut">
+  <div class="foot">
+    <p id="tw">Laisse-toi emporter par la vibration du Handpan.</p>
+    <nav class="links" aria-label="Liens">
+      <a class="btn" href="https://www.youtube.com/@Key_972" target="_blank" rel="noopener">YouTube @Key_972</a>
+      <a class="btn2" href="https://www.instagram.com/key_handpan/" target="_blank" rel="noopener">@key_handpan</a>
+      <a class="btn2" href="https://www.instagram.com/hang.ora/" target="_blank" rel="noopener">@hang.ora</a>
+      <a class="btn2" href="https://www.instagram.com/atempo.experience/" target="_blank" rel="noopener">@atempo.experience</a>
+    </nav>
+    <p class="small">Key Handpan · Martinique / Paris</p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var clamp = function (v, a, b) { return Math.min(b === undefined ? 1 : b, Math.max(a === undefined ? 0 : a, v)); };
+  var norm = function (p, a, b) { return clamp((p - a) / (b - a)); };
+  var sm = function (t) { return t * t * (3 - 2 * t); };
+  var rng = function (seed) { var x = Math.sin(seed * 127.1) * 43758.5453; return x - Math.floor(x); };
+  var $ = function (id) { return document.getElementById(id); };
+
+  /* page wrapper (above) and fixed decor layer (below), created first so observers see the final DOM */
+  var decor = document.createElement("div"); decor.className = "decor"; decor.setAttribute("aria-hidden", "true");
+  var pageWrap = document.createElement("div"); pageWrap.className = "page";
+  (function () {
+    var first = document.getElementById("scene"); first.parentNode.insertBefore(decor, first); first.parentNode.insertBefore(pageWrap, first);
+    [].slice.call(document.querySelectorAll("body > section, body > div.ticker, body > footer")).forEach(function (el) { pageWrap.appendChild(el); });
+  })();
+
+  /* ---------- theme tokens ---------- */
+  var FG = "#EFEBE2", BG = "#0C0C0D", PAPER = "#E8E4DA", PINK = "#141414", FRINGE = "#F7F4EC";
+  function tok(n, f) { return (getComputedStyle(document.documentElement).getPropertyValue(n) || "").trim() || f; }
+  function readTheme() { FG = tok("--fg", FG); BG = tok("--bg", BG); PAPER = tok("--paper", PAPER); PINK = tok("--paper-ink", PINK); FRINGE = tok("--fringe", FRINGE); }
+  readTheme();
+  var onTheme = function () { readTheme(); setTimeout(function () { buildAllShadows(); dirtyAll(); }, 0); };
+  new MutationObserver(onTheme).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  try { window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", onTheme); } catch (e) {}
+
+  /* ---------- photos ---------- */
+  var IM = [], loaded = 0;
+  ["img/p1.jpg", "img/p2.jpg", "img/p3.jpg", "img/p4.jpg", "img/p5.jpg"].forEach(function (s) {
+    var im = new Image(); im.onload = im.onerror = function () { loaded++; dirtyAll(); }; im.src = s; IM.push(im);
+  });
+
+  /* ---------- torn edges ---------- */
+  function tornPts(w, h, amp, step, seed) {
+    var P = [], i = 0, t = 0, x, y;
+    function n(t) { i++; return clamp(0.5 + 0.55 * Math.sin(t * 0.09 + seed) + 0.3 * Math.sin(t * 0.23 + seed * 1.7) + (rng(seed * 131 + i) - 0.5) * 0.9, 0, 1.3); }
+    for (x = 0; x < w; x += step) { P.push([x, amp * n(t)]); t += step; }
+    for (y = 0; y < h; y += step) { P.push([w - amp * n(t), y]); t += step; }
+    for (x = w; x > 0; x -= step) { P.push([x, h - amp * n(t)]); t += step; }
+    for (y = h; y > 0; y -= step) { P.push([amp * n(t), y]); t += step; }
+    return P;
+  }
+  function polyStr(P) { return "polygon(" + P.map(function (p) { return p[0].toFixed(1) + "px " + p[1].toFixed(1) + "px"; }).join(",") + ")"; }
+  var tears = [].slice.call(document.querySelectorAll(".tear"));
+  function buildTear(fig, idx) {
+    var im = fig.querySelector(".tear-i"), f = fig.querySelector(".tear-f"), w = fig.offsetWidth, h = fig.offsetHeight;
+    if (w < 20 || h < 20) return;
+    im.style.clipPath = polyStr(tornPts(w, h, 4, 7, idx * 3 + 1));
+    f.style.clipPath = polyStr(tornPts(w + 18, h + 18, 10, 4, idx * 5 + 2));
+    fig.classList.add("ready");
+  }
+  var tearRO = null;
+  try { tearRO = new ResizeObserver(function (es) { es.forEach(function (e) { buildTear(e.target, tears.indexOf(e.target)); }); }); } catch (e) {}
+  tears.forEach(function (f, i) { buildTear(f, i); if (tearRO) tearRO.observe(f); var im = f.querySelector("img"); if (im) im.addEventListener("load", function () { buildTear(f, i); }); });
+  [].forEach.call(document.querySelectorAll(".rip"), function (svg, k) {
+    var H = 36, body = "M0 " + H, fr = "M0 " + H;
+    for (var x = 0; x <= 1000; x += 5) {
+      var yb = 12 + 15 * clamp(0.5 + 0.5 * Math.sin(x * 0.05 + k) + 0.3 * Math.sin(x * 0.17 + k * 2) + (rng(x + k * 977) - 0.5) * 0.8, 0, 1);
+      var yf = Math.max(1, yb - 3 - 5 * rng(x * 3 + k * 13));
+      body += "L" + x + " " + yb.toFixed(1); fr += "L" + x + " " + yf.toFixed(1);
+    }
+    svg.querySelector(".rb").setAttribute("d", body + "L1000 " + H + "Z");
+    svg.querySelector(".rf").setAttribute("d", fr + "L1000 " + H + "Z");
+  });
+
+  /* ---------- handpan sound ---------- */
+  var AC = null, master = null;
+  var SCALE = [146.83, 220, 233.08, 261.63, 293.66, 329.63, 349.23, 392, 440], NAMES = ["D3", "A3", "Bb3", "C4", "D4", "E4", "F4", "G4", "A4"];
+  function ensureAudio() {
+    if (AC) { if (AC.state === "suspended") AC.resume(); return true; }
+    try {
+      var Ctx = window.AudioContext || window.webkitAudioContext;
+      AC = new Ctx();
+      var comp = AC.createDynamicsCompressor(); master = AC.createGain(); master.gain.value = 0.7;
+      master.connect(comp); comp.connect(AC.destination);
+      var conv = AC.createConvolver(), len = Math.floor(AC.sampleRate * 2.2), buf = AC.createBuffer(2, len, AC.sampleRate);
+      for (var ch = 0; ch < 2; ch++) { var d = buf.getChannelData(ch); for (var i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2.6); }
+      conv.buffer = buf; var wet = AC.createGain(); wet.gain.value = 0.38; conv.connect(wet); wet.connect(comp); master.connect(conv);
+      return true;
+    } catch (e) { AC = null; return false; }
+  }
+  function pluck(i, when, vel) {
+    if (!AC) return;
+    [[1, 1, 3.2], [2, 0.3, 2.2], [3.01, 0.1, 1.4]].forEach(function (p) {
+      var o = AC.createOscillator(), g = AC.createGain();
+      o.type = "sine"; o.frequency.value = SCALE[i] * p[0];
+      g.gain.setValueAtTime(0.0001, when); g.gain.exponentialRampToValueAtTime(Math.max(0.0002, vel * p[1] * 0.5), when + 0.008); g.gain.exponentialRampToValueAtTime(0.0001, when + p[2]);
+      o.connect(g); g.connect(master); o.start(when); o.stop(when + p[2] + 0.05);
+    });
+  }
+  var PATS = {
+    hero: { bpm: 66, n: [0, -1, 4, -1, 5, -1, 4, 2, 0, -1, 4, -1, 7, -1, 5, 4] },
+    m0: { bpm: 66, n: [0, -1, 4, -1, 5, -1, 4, 2, 0, -1, 4, -1, 7, -1, 5, 4] },
+    m1: { bpm: 74, n: [1, 3, 5, 3, 1, 3, 6, 5, 0, 2, 4, 2, 0, 2, 5, 4] },
+    m2: { bpm: 60, n: [0, 4, 7, 4, 0, 5, 8, 5, 0, 3, 6, 3, 0, 4, 7, 4] }
+  };
+  var music = { id: null, timer: 0, step: 0, next: 0 };
+  var soundBtns = {};
+  function syncSound() {
+    Object.keys(soundBtns).forEach(function (id) {
+      var b = soundBtns[id], on = music.id === id;
+      b.setAttribute("aria-pressed", on ? "true" : "false");
+      b.textContent = b.getAttribute("data-label-" + (on ? "on" : "off"));
+    });
+  }
+  function stopMusic() { clearInterval(music.timer); music.id = null; syncSound(); }
+  function startMusic(id) {
+    stopMusic();
+    if (!ensureAudio()) return false;
+    var pat = PATS[id]; music.id = id; music.step = 0; music.next = AC.currentTime + 0.1;
+    music.timer = setInterval(function () {
+      while (music.next < AC.currentTime + 0.35) {
+        var n = pat.n[music.step % pat.n.length];
+        if (n >= 0) pluck(n, music.next, 0.55 + Math.random() * 0.4);
+        music.next += 60 / pat.bpm / 2; music.step++;
+      }
+    }, 100);
+    syncSound(); return true;
+  }
+  document.addEventListener("visibilitychange", function () { if (document.hidden) { stopMusic(); cards.forEach(function (c) { c.on = false; }); } });
+
+  /* ---------- montage engine (canvas) ---------- */
+  var TR = 0.9, NZ = [], NZ2 = [];
+  for (var nk = 0; nk < 512; nk++) { NZ.push(0.5 * Math.sin(nk * 0.11) + 0.3 * Math.sin(nk * 0.37 + 1) + (rng(nk) - 0.5) * 0.8); NZ2.push(rng(nk * 7 + 3)); }
+  function mk(scs) { var tot = 0; scs.forEach(function (s) { s.s = tot; tot += s.d; }); return { sc: scs, total: tot }; }
+  var M_HERO = mk([
+    { i: 1, fx: 0.5, fy: 0.35, z: [1.05, 1.2], d: 3.4 }, { i: 0, fx: 0.35, fy: 0.45, z: [1.1, 1.0], d: 3.4 },
+    { i: 4, fx: 0.6, fy: 0.5, z: [1.0, 1.15], d: 3.4 }, { i: 3, fx: 0.7, fy: 0.4, z: [1.05, 1.2], d: 3.4 }, { i: 2, fx: 0.4, fy: 0.5, z: [1.1, 1.02], d: 3.4 }]);
+  var MONT = [
+    { id: "m0", title: "Vibration", desc: "Martinique / Paris, un handpan et du temps.", alt: "Montage de photos de Key au handpan, avec des transitions en papier déchiré",
+      m: mk([{ i: 1, fx: 0.5, fy: 0.35, z: [1.04, 1.16], d: 3.6, cap: "Laisse-toi emporter par la vibration du Handpan" }, { i: 0, fx: 0.4, fy: 0.45, z: [1.12, 1.0], d: 3.4, cap: "Martinique / Paris" },
+        { i: 3, fx: 0.7, fy: 0.4, z: [1.0, 1.14], d: 3.4, cap: "Handpanman" }, { i: 4, fx: 0.6, fy: 0.5, z: [1.05, 1.2], d: 3.4, cap: "Le son qui se pose" }]) },
+    { id: "m1", title: "Hangora", desc: "Créer du lien par l'art et le son.", alt: "Montage de photos sur l'association Hangora, avec des transitions en papier déchiré",
+      m: mk([{ i: 2, fx: 0.35, fy: 0.6, z: [1.1, 1.0], d: 3.6, cap: "Créer du lien par l'art et le son" }, { i: 4, fx: 0.7, fy: 0.55, z: [1.0, 1.15], d: 3.4, cap: "Ateliers de Handpan" },
+        { i: 1, fx: 0.5, fy: 0.4, z: [1.06, 1.18], d: 3.4, cap: "Jams sessions libres" }, { i: 3, fx: 0.5, fy: 0.45, z: [1.12, 1.02], d: 3.4, cap: "Performances hybrides" }]) },
+    { id: "m2", title: "Atempo", desc: "L'expérience handpan à Paris.", alt: "Montage de photos sur Atempo Experience, avec des transitions en papier déchiré",
+      m: mk([{ i: 3, fx: 0.6, fy: 0.4, z: [1.04, 1.16], d: 3.6, cap: "L'expérience Handpan à Paris" }, { i: 2, fx: 0.4, fy: 0.55, z: [1.1, 1.0], d: 3.4, cap: "Entre musique, bien-être & collectif" },
+        { i: 0, fx: 0.4, fy: 0.5, z: [1.0, 1.14], d: 3.4, cap: "Ateliers & événements immersifs" }, { i: 1, fx: 0.55, fy: 0.35, z: [1.06, 1.18], d: 3.4, cap: "Paris" }]) }
+  ];
+  function nz(v) { return NZ[Math.floor(v * 255) & 511]; }
+  function nz2(v) { return NZ2[Math.floor(v * 255) & 511]; }
+  function coverDraw(c, im, w, h, fx, fy, z) {
+    if (!im || !im.naturalWidth) return;
+    var s = Math.max(w / im.naturalWidth, h / im.naturalHeight) * z, dw = im.naturalWidth * s, dh = im.naturalHeight * s;
+    c.drawImage(im, clamp(w / 2 - fx * dw, w - dw, 0), clamp(h / 2 - fy * dh, h - dh, 0), dw, dh);
+  }
+  function drawSc(c, w, h, S, u) { var k = clamp(u / S.d); coverDraw(c, IM[S.i], w, h, S.fx, S.fy, S.z[0] + (S.z[1] - S.z[0]) * k); }
+  function wrapText(c, text, maxW) {
+    var words = text.split(" "), lines = [], cur = "";
+    words.forEach(function (wd) { var t = cur ? cur + " " + wd : wd; if (c.measureText(t).width > maxW && cur) { lines.push(cur); cur = wd; } else cur = t; });
+    lines.push(cur); return lines;
+  }
+  function drawCap(c, w, h, text, a, seed) {
+    if (!text || a <= 0.01) return;
+    var fs = Math.round(w * 0.095); c.font = fs + 'px "Reenie Beanie", "Segoe Script", cursive';
+    var lines = wrapText(c, text, w * 0.74), lh = fs * 0.92, pad = fs * 0.35, bw = 0;
+    lines.forEach(function (l) { bw = Math.max(bw, c.measureText(l).width); });
+    bw += pad * 2; var bh = lines.length * lh + pad * 1.4, x0 = w * 0.06, y0 = h * 0.94 - bh;
+    c.save(); c.globalAlpha = clamp(a); c.translate(x0 + bw / 2, y0 + bh / 2); c.rotate(-0.025); c.translate(-bw / 2, -bh / 2);
+    var P = tornPts(bw, bh, fs * 0.12, Math.max(5, fs * 0.2), seed);
+    c.beginPath(); P.forEach(function (p, i) { if (i) c.lineTo(p[0], p[1]); else c.moveTo(p[0], p[1]); }); c.closePath();
+    c.shadowColor = "rgba(0,0,0,0.45)"; c.shadowBlur = 10; c.shadowOffsetY = 4; c.fillStyle = PAPER; c.fill();
+    c.shadowColor = "transparent"; c.fillStyle = PINK; c.textBaseline = "alphabetic";
+    lines.forEach(function (l, i) { c.fillText(l, pad, pad * 0.5 + fs * 0.78 + i * lh); });
+    c.restore();
+  }
+  function renderMontage(c, w, h, M, t, caps) {
+    var tt = ((t % M.total) + M.total) % M.total, k = 0;
+    while (k < M.sc.length - 1 && tt >= M.sc[k + 1].s) k++;
+    var S = M.sc[k], N = M.sc[(k + 1) % M.sc.length], u = tt - S.s;
+    c.save(); c.fillStyle = "#000"; c.fillRect(0, 0, w, h); drawSc(c, w, h, S, u);
+    var inTr = u > S.d - TR, p = inTr ? sm(clamp((u - (S.d - TR)) / TR)) : 0;
+    if (inTr) {
+      var sc = w / 400, edge = function (y) { return p * (w * 1.3 + 60) - 40 + (y / h - 0.5) * w * 0.25 + nz(y / h) * w * 0.03; };
+      var ys = [], y; for (y = -6; y <= h + 6; y += Math.max(3, h / 70)) ys.push(y);
+      c.save(); c.shadowColor = "rgba(0,0,0,0.5)"; c.shadowBlur = 12; c.fillStyle = FRINGE; c.beginPath();
+      ys.forEach(function (yy, i) { var x = edge(yy) + (5 + nz2(yy / h) * 9) * sc; if (i) c.lineTo(x, yy); else c.moveTo(x, yy); });
+      for (var i = ys.length - 1; i >= 0; i--) c.lineTo(edge(ys[i]), ys[i]);
+      c.closePath(); c.fill(); c.restore();
+      c.save(); c.beginPath(); c.moveTo(-20, -6);
+      ys.forEach(function (yy) { c.lineTo(edge(yy), yy); }); c.lineTo(-20, h + 6); c.closePath(); c.clip();
+      drawSc(c, w, h, N, 0); c.restore();
+    }
+    if (caps) {
+      if (!inTr) drawCap(c, w, h, S.cap, clamp(u / 0.4), k * 7 + 1);
+      else { drawCap(c, w, h, S.cap, 1 - p * 2, k * 7 + 1); drawCap(c, w, h, N.cap, (p - 0.6) / 0.4, ((k + 1) % M.sc.length) * 7 + 1); }
+    }
+    c.restore();
+  }
+
+  /* ---------- hero scene ---------- */
+  var GW = 100, GH = 140, GAP = 20, BASE = 14;
+  var GLYPH_D = {
+    K: ["M20 8 C16 50 22 92 18 132", "M86 14 C62 40 42 56 20 72", "M44 64 C60 88 76 112 90 132"],
+    E: ["M88 14 C62 6 36 12 16 12 C12 50 20 92 16 128 C46 134 68 126 90 132", "M16 68 C40 62 58 70 76 66"],
+    Y: ["M14 10 C30 40 42 58 52 74", "M90 8 C74 40 58 70 50 74 C46 96 48 116 44 134"]
+  };
+  var GLYPHS = {};
+  (function () {
+    var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg"); svg.setAttribute("width", "0"); svg.setAttribute("height", "0"); svg.setAttribute("aria-hidden", "true"); svg.style.position = "absolute";
+    document.body.appendChild(svg);
+    Object.keys(GLYPH_D).forEach(function (ch) {
+      var g = { paths: [], lens: [], total: 0 };
+      GLYPH_D[ch].forEach(function (d) { var el = document.createElementNS("http://www.w3.org/2000/svg", "path"); el.setAttribute("d", d); svg.appendChild(el); var len = el.getTotalLength(); g.paths.push(new Path2D(d)); g.lens.push(len); g.total += len; });
+      GLYPHS[ch] = g;
+    });
+    document.body.removeChild(svg);
+  })();
+  var stage = $("stage"), scene = $("scene"), cv = $("cv"), ctx = cv.getContext("2d");
+  var mc = document.createElement("canvas"), mctx = mc.getContext("2d"), fc = document.createElement("canvas"), fctx = fc.getContext("2d");
+  var W = 1, H = 1, dpr = 1, fw = 1, fh = 1, letters = [], S = 1, OX = 0, OY = 0, heroT = reduce ? 4 : 0, playing = !reduce, cur = reduce ? 0.62 : 0;
+  function buildLayout() {
+    var maxW = 3 * GW + 2 * GAP; S = Math.min((W * 0.8) / maxW, (H * 0.52) / GH); OX = (W - maxW * S) / 2; OY = (H - GH * S) / 2 - H * 0.04;
+    letters = ["K", "E", "Y"].map(function (ch, i) { return { g: GLYPHS[ch], x: i * (GW + GAP), i: i, rot: (rng(i + 3) - 0.5) * 0.3, dy: (rng(i + 9) - 0.5) * 40 }; });
+    $("sub").style.top = (OY + GH * S + 14) + "px";
+  }
+  function eachLetter(c, p, fn) {
+    var tr = sm(norm(p, 0.07, 0.34));
+    letters.forEach(function (L) {
+      var ws = 0.03 + L.i * 0.105, wr = sm(norm(p, ws, ws + 0.14));
+      c.save(); c.translate(OX + S * (L.x + GW / 2), OY + S * GH / 2); c.rotate((1 - tr) * L.rot); c.scale(S, S); c.translate(-GW / 2, -GH / 2 + (1 - tr) * L.dy); fn(L, wr); c.restore();
+    });
+  }
+  function drawScene(p) {
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.globalAlpha = 1; ctx.fillStyle = BG; ctx.fillRect(0, 0, W, H);
+    var va = sm(norm(p, 0.36, 0.56)), grow = sm(norm(p, 0.45, 0.95)), e = grow * grow;
+    if (va < 1) {
+      ctx.globalAlpha = 1 - va; ctx.strokeStyle = FG; ctx.lineCap = "round"; ctx.lineJoin = "round"; ctx.lineWidth = BASE;
+      eachLetter(ctx, p, function (L, wr) {
+        var D = wr * L.g.total;
+        for (var k = 0; k < L.g.paths.length; k++) { var len = L.g.lens[k], seg = Math.min(len, Math.max(0, D)); D -= len; if (seg < 0.5) continue; ctx.setLineDash(seg >= len - 0.01 ? [] : [seg, len + 10]); ctx.stroke(L.g.paths[k]); }
+      });
+      ctx.setLineDash([]); ctx.globalAlpha = 1;
+    }
+    if (va > 0) {
+      fctx.setTransform(1, 0, 0, 1, 0, 0); renderMontage(fctx, fw, fh, M_HERO, heroT, false);
+      mctx.setTransform(1, 0, 0, 1, 0, 0); mctx.clearRect(0, 0, mc.width, mc.height); mctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      mctx.globalCompositeOperation = "source-over"; mctx.strokeStyle = "#fff"; mctx.lineCap = "round"; mctx.lineJoin = "round";
+      mctx.lineWidth = BASE + ((Math.hypot(W, H) * 1.05) / S) * e;
+      eachLetter(mctx, p, function (L) { for (var k = 0; k < L.g.paths.length; k++) mctx.stroke(L.g.paths[k]); });
+      mctx.globalCompositeOperation = "source-in"; mctx.drawImage(fc, 0, 0, W, H); mctx.globalCompositeOperation = "source-over";
+      ctx.globalAlpha = va; ctx.drawImage(mc, 0, 0, W, H); ctx.globalAlpha = 1;
+    }
+  }
+  function resize() {
+    var r = stage.getBoundingClientRect(); W = Math.max(1, r.width); H = Math.max(1, r.height); dpr = Math.min(2, window.devicePixelRatio || 1);
+    cv.width = mc.width = Math.round(W * dpr); cv.height = mc.height = Math.round(H * dpr);
+    fw = Math.ceil(W * 0.5); fh = Math.ceil(H * 0.5); fc.width = fw; fc.height = fh; buildLayout();
+    cards.forEach(function (c) { c.dirty = true; });
+  }
+  var hint = $("hint"), ctl = $("ctl"), sub = $("sub"), b1 = $("play1");
+  b1.addEventListener("click", function () { playing = !playing; b1.textContent = playing ? "Pause" : "Lecture"; });
+  soundBtns.hero = $("snd1"); $("snd1").setAttribute("data-label-on", "Son coupé"); $("snd1").setAttribute("data-label-off", "Son");
+  $("snd1").addEventListener("click", function () { if (music.id === "hero") stopMusic(); else startMusic("hero"); });
+  function progress() { var r = scene.getBoundingClientRect(); return clamp(-r.top / Math.max(1, r.height - stage.getBoundingClientRect().height)); }
+
+  /* ---------- word wall + fade ---------- */
+  var work = $("work"), wall = $("wall"), wallText = $("wall-text"), tiles = document.querySelectorAll(".wtile");
+  var WORDS = "VIBRATION SON LIEN HANDPAN ÉCOUTE JAM PARIS MARTINIQUE ART ENSEMBLE ÉCHANGE JOIE HANGORA ATEMPO RYTHME RESPIRE CERCLE PARTAGE NATURE HUMAIN TENDRESSE".split(" ");
+  (function () { var html = ""; for (var i = 0; i < 90; i++) html += '<span class="pr-w">' + WORDS[(i * 7 + (i >> 2)) % WORDS.length] + "</span> "; wallText.innerHTML = html; })();
+  var wallDone = false, wallTimers = [], workVis = false, wallO = 1;
+  function visibleWords() {
+    var list = [].slice.call(wallText.querySelectorAll(".pr-w")).filter(function (w) { return w.offsetTop + w.offsetHeight <= wallText.clientHeight + 1; });
+    list.sort(function (a, b) { return a.offsetTop - b.offsetTop || a.offsetLeft - b.offsetLeft; }); return list;
+  }
+  function revealAllWords() { visibleWords().forEach(function (w) { w.classList.add("pr-on"); w.classList.remove("pr-stomp"); }); }
+  function runWall() {
+    if (wallDone) return; wallDone = true;
+    if (!reduce) splitWall();
+    var words = visibleWords(), n = words.length; if (reduce) { revealAllWords(); return; }
+    var steps = Math.ceil(n / 2);
+    function step(i) {
+      if (i >= steps) return;
+      var pair = [words[i], words[n - 1 - i]]; pair.forEach(function (w) { w.classList.add("pr-on", "pr-stomp"); });
+      wallTimers.push(setTimeout(function () { pair.forEach(function (w) { w.classList.remove("pr-stomp"); }); }, 150));
+      wallTimers.push(setTimeout(function () { step(i + 1); }, 170));
+    }
+    step(0);
+  }
+  window.addEventListener("pagehide", function () { wallTimers.forEach(clearTimeout); });
+  try { new IntersectionObserver(function (es) { es.forEach(function (en) { workVis = en.isIntersecting; if (en.isIntersecting && !wallDone) fontsReady.then(runWall); }); }, { threshold: 0.05 }).observe(work); } catch (e) { workVis = true; runWall(); }
+  /* hover / focus on a door: a detailed card slides in on the opposite side of the screen */
+  var TIPS = [
+    { k: "La musique", t: "Key", p: "Handpanman entre la Martinique et Paris. Il joue pour faire voyager et pour apaiser : concerts, performances, et des expériences musicales méditatives où l'on vient simplement écouter.", l: ["Cours et transmission du handpan", "Expériences musicales méditatives", "Performances, concerts, collaborations"] },
+    { k: "L'associatif", t: "Hangora", p: "Une association née pour créer du lien par l'art et le son : des expériences immersives qui rassemblent, dans une communauté chaleureuse et bienveillante.", l: ["Ateliers de handpan", "Jams sessions libres", "Performances hybrides"] },
+    { k: "L'événementiel & la transmission", t: "Atempo Experience", p: "Le handpan à Paris, entre musique, bien-être et collectif : des moments à vivre ensemble et des cours pour apprendre à jouer et à écouter.", l: ["Événements et moments collectifs", "Cours et accompagnement", "Un instant pour respirer et écouter"] }
+  ];
+  var tip = $("tip");
+  function showTip(i) {
+    var d = TIPS[i], r = tiles[i].getBoundingClientRect(), right = r.left + r.width / 2 > window.innerWidth / 2;
+    tip.innerHTML = '<span class="mono">' + d.k.replace("&", "&amp;") + '</span><h3>' + d.t + '</h3><p>' + d.p + '</p><ul>' + d.l.map(function (x) { return "<li>" + x + "</li>"; }).join("") + "</ul>";
+    tip.style.left = right ? "max(16px, 4vw)" : "auto"; tip.style.right = right ? "auto" : "max(16px, 4vw)";
+    tip.classList.add("on");
+  }
+  tiles.forEach(function (t, i) {
+    t.addEventListener("pointerenter", function (e) { if (e.pointerType !== "touch") showTip(i); });
+    t.addEventListener("pointerleave", function () { tip.classList.remove("on"); });
+    t.addEventListener("focus", function () { showTip(i); });
+    t.addEventListener("blur", function () { tip.classList.remove("on"); });
+  });
+  /* chaos: each letter gets one fate (grow, multiply, fall, vanish, scramble) driven only by scroll */
+  var wallLetters = [], hiTile = -2, chaosPrev = -1, SCRU = "ABCDEFGHIJKLMNOPQRSTUVWXYZ#@&%$";
+  var MOM = [0.16, 0.38, 0.6, 0.82];
+  function splitWall() {
+    var idx = 0;
+    visibleWords().forEach(function (w) {
+      var txt = w.textContent; w.textContent = "";
+      Array.from(txt).forEach(function (ch) {
+        var el = document.createElement("span"); el.className = "lt"; el.textContent = ch; w.appendChild(el);
+        var r = rng(idx * 5 + 7), type = r < 0.07 ? "pop" : r < 0.14 ? "multi" : r < 0.21 ? "fall" : r < 0.3 ? "fade" : r < 0.36 ? "scr" : "none";
+        wallLetters.push({ el: el, ch: ch, i: idx, type: type, t0: MOM[Math.floor(rng(idx * 3 + 1) * MOM.length)] + (rng(idx * 3 + 2) - 0.5) * 0.04, dups: false, on: false });
+        idx++;
+      });
+    });
+    hiTile = -2;
+  }
+  function addDups(L) {
+    for (var k = 0; k < 3; k++) {
+      var d = document.createElement("span"); d.className = "dup" + (k === 0 ? " acc" : ""); d.textContent = L.ch; var s = d.style;
+      for (var q = 0; q < 5; q++) {
+        s.setProperty("--x" + q, ((Math.random() - 0.5) * 0.14).toFixed(2) + "em"); s.setProperty("--y" + q, ((Math.random() - 0.5) * 0.14).toFixed(2) + "em");
+        s.setProperty("--r" + q, ((Math.random() - 0.5) * 10).toFixed(0) + "deg"); s.setProperty("--s" + q, (0.97 + Math.random() * 0.08).toFixed(2));
+      }
+      s.setProperty("--d", (0.35 + Math.random() * 0.5).toFixed(2) + "s"); s.setProperty("--dl", "-" + Math.random().toFixed(2) + "s"); s.setProperty("--o", (0.2 + Math.random() * 0.2).toFixed(2));
+      L.el.appendChild(d);
+    }
+    L.dups = true;
+  }
+  /* each letter only reacts during one short window of the scroll (a bump that returns to rest) */
+  function updateChaos() {
+    if (reduce || !wallLetters.length) return;
+    var wr = work.getBoundingClientRect(), vh = window.innerHeight, c = Math.round(clamp((vh * 0.95 - wr.top) / (vh * 0.95)) * 240) / 240;
+    if (c === chaosPrev) return; chaosPrev = c;
+    wallLetters.forEach(function (L) {
+      var u = (c - L.t0) / 0.1, el = L.el;
+      if (u <= 0 || u >= 1) {
+        if (L.on) { L.on = false; el.style.transform = ""; el.style.opacity = ""; el.style.color = ""; el.classList.remove("multi"); if (L.type === "scr") el.firstChild.nodeValue = L.ch; }
+        return;
+      }
+      L.on = true;
+      var b = Math.sin(Math.PI * u);
+      if (L.type === "pop") { el.style.transform = "scale(" + (1 + 0.28 * b).toFixed(3) + ")"; el.style.color = b > 0.4 ? "var(--accent)" : ""; }
+      else if (L.type === "multi") { if (!L.dups) addDups(L); el.classList.toggle("multi", b > 0.1); }
+      else if (L.type === "fall") { el.style.transform = "translate3d(0," + (b * 14).toFixed(1) + "px,0)"; el.style.opacity = (1 - 0.6 * b).toFixed(3); }
+      else if (L.type === "fade") { el.style.opacity = (1 - 0.75 * b).toFixed(3); }
+      else if (L.type === "scr") { el.firstChild.nodeValue = b < 0.25 ? L.ch : SCRU.charAt(Math.floor(rng(L.i * 9 + Math.floor(c * 120)) * SCRU.length)); el.style.color = b >= 0.25 ? "var(--accent)" : ""; }
+    });
+  }
+  function updateWork() {
+    if (!workVis) return;
+    var o; if (reduce) o = 0.3; else {
+      var vh = window.innerHeight, ft = tiles[0].getBoundingClientRect().top, lb = tiles[tiles.length - 1].getBoundingClientRect().bottom;
+      o = 1 - 0.6 * clamp((vh - ft) / (vh * 0.5)) + 0.6 * clamp((vh * 0.5 - lb) / (vh * 0.5));
+    }
+    /* the card nearest the middle of the screen lights its letter in the wall: Key -> R, Hangora -> H, Atempo -> A */
+    var HL = ["R", "H", "A"], vm = window.innerHeight / 2, best = -1, bd = 1e9;
+    tiles.forEach(function (t, i) { var r = t.getBoundingClientRect(); if (r.bottom < 0 || r.top > window.innerHeight) return; var d = Math.abs((r.top + r.bottom) / 2 - vm); if (d < bd) { bd = d; best = i; } });
+    if (best !== hiTile) { hiTile = best; var ch = best < 0 ? "" : HL[best]; wallLetters.forEach(function (L) { L.el.classList.toggle("hi", L.ch.toUpperCase() === ch); }); }
+    var sy = window.scrollY; wallLetters.forEach(function (L) { L.el.style.rotate = L.el.classList.contains("hi") ? (Math.sin(sy / 150 + L.i * 1.7) * 9).toFixed(1) + "deg" : ""; });
+    wallO += (o - wallO) * 0.25; wall.style.setProperty("--wo", String(Math.round(wallO * 1000) / 1000));
+  }
+
+  /* ---------- decode + typewriter ---------- */
+  var DECODE_STEPS = 64, SCR = "!<>-_/[]{}=+*^?#0123456789abcdefghijklmnopqrstuvwxyz";
+  function graphemes(s) { try { var seg = new Intl.Segmenter(undefined, { granularity: "grapheme" }); return Array.from(seg.segment(s), function (x) { return x.segment; }); } catch (e) { return Array.from(s); } }
+  function srAndVisual(host, cls) {
+    var text = host.textContent, sr = document.createElement("span"); sr.className = "sr"; sr.textContent = text;
+    var vis = document.createElement("span"); vis.className = cls; vis.setAttribute("aria-hidden", "true"); host.textContent = ""; host.appendChild(sr); host.appendChild(vis);
+    return { text: text, vis: vis };
+  }
+  var dec = $("decode"), decChars = [], decPrev = 0, decStep = -1, decReady = false;
+  (function () {
+    var o = srAndVisual(dec, "dv"), idx = 0, NT = graphemes(o.text.replace(/ /g, "")).length;
+    o.text.split(" ").forEach(function (word, wi) {
+      if (wi) o.vis.appendChild(document.createTextNode(" "));
+      var ws = document.createElement("span"); ws.className = "dw";
+      graphemes(word).forEach(function (g) { var s = document.createElement("span"); s.className = "dc"; s.textContent = g; decChars.push({ el: s, ch: g, i: idx, show: (idx / NT) * 0.8, lock: (idx / NT) * 0.8 + 0.07 + rng(idx * 2 + 12) * 0.05, state: "" }); ws.appendChild(s); idx++; });
+      o.vis.appendChild(ws);
+    });
+  })();
+  function fixDecodeWidths() {
+    decChars.forEach(function (c) { c.el.style.width = ""; c.el.className = "dc"; c.el.textContent = c.ch; c.state = ""; });
+    var ws = decChars.map(function (c) { return c.el.getBoundingClientRect().width; }); decChars.forEach(function (c, i) { c.el.style.width = ws[i] + "px"; }); decStep = -1;
+  }
+  function renderDecode(p) {
+    var step = reduce ? DECODE_STEPS : Math.floor(p * DECODE_STEPS); if (step === decStep) return; decStep = step; var q = step / DECODE_STEPS;
+    for (var i = 0; i < decChars.length; i++) {
+      var c = decChars[i], st = q >= c.lock ? "done" : q >= c.show ? "scr" : "off";
+      if (st === "scr") { c.el.textContent = SCR.charAt(Math.floor(rng(c.i * 131 + step * 7.7) * SCR.length)); c.el.className = "dc scr"; c.state = st; }
+      else if (st !== c.state) { c.el.textContent = c.ch; c.el.className = st === "off" ? "dc off" : "dc"; c.state = st; }
+    }
+  }
+  function updateDecode() { if (!decReady) return; var r = dec.getBoundingClientRect(), vh = window.innerHeight; decPrev = clamp((vh * 0.95 - r.top) / (vh * 0.8)); renderDecode(decPrev); }
+  var tw = $("tw"), twItems = [], twT = 1, twShown = -1, twCaret = document.createElement("span"); twCaret.className = "tw-caret";
+  (function () {
+    var o = srAndVisual(tw, "tw-v"), rh = [50, 67, 67, 67, 33, 67, 83, 50, 67], t = 333, k = 0;
+    graphemes(o.text).forEach(function (g) { var s = document.createElement("span"); s.className = "tw-ch"; s.textContent = g; twItems.push({ el: s, at: t }); o.vis.appendChild(s); t += g === " " ? 200 : rh[k++ % rh.length]; });
+    twT = t; o.vis.appendChild(twCaret);
+  })();
+  function updateTw() {
+    var r = tw.getBoundingClientRect(), vh = window.innerHeight, time = (reduce ? 1 : clamp((vh - r.top) / (vh * 0.3))) * twT, n = 0;
+    while (n < twItems.length && twItems[n].at <= time) n++; if (reduce) n = twItems.length; if (n === twShown) return; twShown = n;
+    for (var i = 0; i < twItems.length; i++) { if (i < n) twItems[i].el.setAttribute("data-on", ""); else twItems[i].el.removeAttribute("data-on"); }
+    if (n < twItems.length) twItems[n].el.parentNode.insertBefore(twCaret, twItems[n].el); else twItems[0].el.parentNode.appendChild(twCaret);
+  }
+
+  /* ---------- shadow titles ---------- */
+  var shadows = [].slice.call(document.querySelectorAll(".st")).map(function (el) { return { el: el, cv: null, on: false, built: false }; });
+  function buildShadow(o) {
+    var st = o.el; st.classList.remove("ready");
+    var cs = getComputedStyle(st), face = cs.color, shade = cs.getPropertyValue("--shade").trim() || "#F2B632", r0 = st.getBoundingClientRect();
+    var fs = parseFloat(cs.fontSize) || 40, n = Math.ceil(Math.log(fs * 0.3 + 1) / Math.LN2), E = Math.pow(2, n) - 1, w = Math.ceil(r0.width), hh = Math.ceil(r0.height);
+    if (w < 2 || hh < 2) return;
+    var d = Math.min(window.devicePixelRatio || 1, Math.sqrt(16e6 / ((w + E) * (hh + E))));
+    if (!o.cv) { o.cv = document.createElement("canvas"); o.cv.className = "st-cv"; o.cv.setAttribute("aria-hidden", "true"); st.appendChild(o.cv); }
+    var items = [], walker = document.createTreeWalker(st, NodeFilter.SHOW_TEXT), nd, rg = document.createRange();
+    while ((nd = walker.nextNode())) { var s = nd.nodeValue; for (var i = 0; i < s.length; i++) { if (/\s/.test(s.charAt(i))) continue; rg.setStart(nd, i); rg.setEnd(nd, i + 1); var rc = rg.getClientRects()[0]; if (rc) items.push({ ch: s.charAt(i), x: rc.left - r0.left, y: rc.top - r0.top }); } }
+    var cvs = o.cv; cvs.width = Math.round((w + E) * d); cvs.height = Math.round((hh + E) * d); cvs.style.width = (w + E) + "px"; cvs.style.height = (hh + E) + "px";
+    cvs.style.setProperty("--wipe-max", (w + E + hh + E) + "px"); cvs.style.setProperty("--sh-h", (hh + E) + "px");
+    var c = cvs.getContext("2d"); c.setTransform(1, 0, 0, 1, 0, 0); c.clearRect(0, 0, cvs.width, cvs.height); c.setTransform(d, 0, 0, d, 0, 0);
+    c.font = cs.fontStyle + " " + cs.fontWeight + " " + cs.fontSize + " " + cs.fontFamily; c.textBaseline = "alphabetic"; c.textAlign = "left";
+    if ("letterSpacing" in c) c.letterSpacing = cs.letterSpacing === "normal" ? "0px" : cs.letterSpacing;
+    function faces(color) { c.fillStyle = color; items.forEach(function (it) { var m = c.measureText(it.ch); c.fillText(it.ch, it.x, it.y + (m.fontBoundingBoxAscent || fs * 0.8)); }); }
+    faces(shade); c.setTransform(1, 0, 0, 1, 0, 0);
+    for (var k = 0; k < n; k++) { var off = Math.round(Math.pow(2, k) * d); c.drawImage(cvs, off, off); }
+    c.setTransform(d, 0, 0, d, 0, 0); faces(face); st.classList.add("ready"); o.built = true; if (o.on) showShadow(o);
+  }
+  function showShadow(o) { if (!o.built) return; if (reduce) o.cv.classList.add("on"); else requestAnimationFrame(function () { requestAnimationFrame(function () { o.cv.classList.add("on"); }); }); }
+  function buildAllShadows() { shadows.forEach(function (o) { if (o.built) buildShadow(o); }); }
+  shadows.forEach(function (o) {
+    try { new IntersectionObserver(function (es) { es.forEach(function (en) { if (en.isIntersecting && !o.on) { o.on = true; showShadow(o); } }); }).observe(o.el); } catch (e) { o.on = true; }
+    try { new ResizeObserver(function () { if (o.built) buildShadow(o); }).observe(o.el); } catch (e) {}
+  });
+
+  /* ---------- montage cards ---------- */
+  var cards = [], cardsEl = $("cards");
+  MONT.forEach(function (d, i) {
+    var art = document.createElement("article"); art.className = "mcard";
+    art.innerHTML = '<span class="tear" style="--r:' + (i % 2 ? 1.2 : -1.2) + 'deg"><span class="tear-f" aria-hidden="true"></span><canvas class="tear-i" role="img"></canvas></span><h3></h3><p></p><div class="row"><button type="button" class="btn2" aria-pressed="false"></button></div>';
+    art.querySelector("h3").textContent = d.title; art.querySelector("p").textContent = d.desc;
+    var cvEl = art.querySelector("canvas"); cvEl.setAttribute("aria-label", d.alt);
+    var btn = art.querySelector("button"); btn.setAttribute("data-label-on", "Couper le son"); btn.setAttribute("data-label-off", "Écouter"); btn.textContent = "Écouter";
+    var c = { id: d.id, m: d.m, el: cvEl, ctx: cvEl.getContext("2d"), t: 1.6, on: false, hover: false, vis: false, dirty: true, w: 0, h: 0, btn: btn };
+    soundBtns[d.id] = btn; cards.push(c); cardsEl.appendChild(art);
+    var fig = art.querySelector(".tear"); tears.push(fig); if (tearRO) tearRO.observe(fig);
+    cvEl.addEventListener("pointerenter", function (e) { if (!reduce && e.pointerType !== "touch") c.hover = true; });
+    cvEl.addEventListener("pointerleave", function () { c.hover = false; if (!c.on) { c.t = 1.6; c.dirty = true; } });
+    btn.addEventListener("click", function () {
+      if (music.id === c.id) { stopMusic(); c.on = false; c.t = 1.6; c.dirty = true; return; }
+      cards.forEach(function (o) { o.on = false; });
+      if (startMusic(c.id)) { c.on = true; c.t = 0; }
+    });
+    try { new IntersectionObserver(function (es) { es.forEach(function (en) { c.vis = en.isIntersecting; c.dirty = true; if (!c.vis && c.on) { stopMusic(); c.on = false; } }); }).observe(cvEl); } catch (e) { c.vis = true; }
+  });
+  function dirtyAll() { cards.forEach(function (c) { c.dirty = true; }); }
+  function updateCards(dt) {
+    cards.forEach(function (c) {
+      if (!c.vis) return;
+      var live = c.on || c.hover; if (live) c.t += dt;
+      if (!live && !c.dirty) return; c.dirty = false;
+      var w = Math.max(1, c.el.clientWidth), h = Math.max(1, c.el.clientHeight), d = Math.min(2, window.devicePixelRatio || 1);
+      var pw = Math.round(w * d), ph = Math.round(h * d); if (c.el.width !== pw || c.el.height !== ph) { c.el.width = pw; c.el.height = ph; }
+      c.ctx.setTransform(d, 0, 0, d, 0, 0); renderMontage(c.ctx, w, h, c.m, c.t, true);
+    });
+  }
+
+  /* ---------- instrument ---------- */
+  var pan = $("pan"), noteEl = $("note-name"), tfs = [];
+  (function () {
+    for (var i = 0; i < 9; i++) {
+      var b = document.createElement("button"); b.type = "button"; b.className = "tf" + (i === 0 ? " ding" : ""); b.setAttribute("data-i", i);
+      b.setAttribute("aria-label", "Note " + NAMES[i] + ", touche " + (i + 1)); b.textContent = NAMES[i];
+      if (i === 0) { b.style.left = "50%"; b.style.top = "52%"; } else { var a = (-112.5 + (i - 1) * 45) * Math.PI / 180; b.style.left = (50 + 36 * Math.cos(a)) + "%"; b.style.top = (50 + 36 * Math.sin(a)) + "%"; }
+      pan.appendChild(b); tfs.push(b);
+    }
+  })();
+  function hitNote(i) {
+    if (!ensureAudio()) return; pluck(i, AC.currentTime + 0.005, 0.85); noteEl.textContent = "Note jouée : " + NAMES[i];
+    var b = tfs[i]; b.classList.remove("hit"); void b.offsetWidth; b.classList.add("hit");
+  }
+  var pressing = false, lastTf = null;
+  function tfAt(e) { var el = document.elementFromPoint(e.clientX, e.clientY); return el && el.closest ? el.closest(".tf") : null; }
+  pan.addEventListener("pointerdown", function (e) { var t = tfAt(e); pressing = true; lastTf = t; if (t) hitNote(+t.getAttribute("data-i")); });
+  pan.addEventListener("pointermove", function (e) { if (!pressing) return; var t = tfAt(e); if (t && t !== lastTf) { lastTf = t; hitNote(+t.getAttribute("data-i")); } });
+  window.addEventListener("pointerup", function () { pressing = false; lastTf = null; });
+  window.addEventListener("pointercancel", function () { pressing = false; lastTf = null; });
+  pan.addEventListener("click", function (e) { if (e.detail === 0) { var t = e.target.closest && e.target.closest(".tf"); if (t) hitNote(+t.getAttribute("data-i")); } });
+  window.addEventListener("keydown", function (e) {
+    if (e.ctrlKey || e.metaKey || e.altKey || /^(INPUT|TEXTAREA|SELECT)$/.test((e.target && e.target.tagName) || "")) return;
+    if (e.key >= "1" && e.key <= "9") { var r = pan.getBoundingClientRect(); if (r.bottom > 0 && r.top < window.innerHeight) hitNote(+e.key - 1); }
+  });
+
+  /* ---------- deck ---------- */
+  var deck = $("deck"), dstatus = $("deck-status"), order = [].slice.call(deck.querySelectorAll(".dcard"));
+  var THRESH = 110, COOLDOWN = 260, deckBusy = false, lastThrow = -1000, dragX = 0, startX = 0, dragOn = false, deckTimers = [];
+  var RETURN = "transform 0.5s cubic-bezier(0.455, 0.03, 0.515, 0.955), opacity 0.5s";
+  function placeCard(card, k, tr) {
+    card.style.transition = tr; card.style.transform = "translate(0," + (k * 12) + "px) scale(" + (1 - k * 0.045) + ")"; card.style.zIndex = String(20 - k);
+    card.style.opacity = k > 3 ? "0" : "1"; card.style.pointerEvents = k === 0 ? "auto" : "none"; card.setAttribute("aria-hidden", k === 0 ? "false" : "true");
+  }
+  function renderDeck(tr) { order.forEach(function (c, k) { placeCard(c, k, tr); }); dstatus.textContent = (parseInt(order[0].getAttribute("data-i"), 10) + 1) + " / " + order.length; }
+  function throwCard(dir) {
+    var now = performance.now(); if (deckBusy || now - lastThrow < COOLDOWN) return false; deckBusy = true; lastThrow = now; var c = order[0];
+    if (reduce) { order.push(order.shift()); renderDeck("none"); deckBusy = false; return true; }
+    c.style.transition = "transform 0.42s cubic-bezier(0.39, 0.575, 0.565, 1)"; c.style.transform = "translate(" + (dir * 96) + "%, -7%) rotate(" + (dir * 11) + "deg) scale(0.97)";
+    deckTimers.push(setTimeout(function () { c.style.zIndex = "0"; order.push(order.shift()); renderDeck(RETURN); deckBusy = false; }, 420)); return true;
+  }
+  deck.addEventListener("pointerdown", function (e) { if (deckBusy || !order[0].contains(e.target)) return; dragOn = true; startX = e.clientX; dragX = 0; order[0].style.transition = "none"; try { order[0].setPointerCapture(e.pointerId); } catch (err) {} });
+  deck.addEventListener("pointermove", function (e) { if (!dragOn) return; dragX = e.clientX - startX; order[0].style.transform = "translate(" + dragX + "px,0) rotate(" + (dragX * 0.06) + "deg)"; });
+  function endDrag() { if (!dragOn) return; dragOn = false; if (Math.abs(dragX) >= THRESH && throwCard(dragX > 0 ? 1 : -1)) { dragX = 0; return; } renderDeck("transform 0.4s cubic-bezier(0.455, 0.03, 0.515, 0.955)"); dragX = 0; }
+  deck.addEventListener("pointerup", endDrag); deck.addEventListener("pointercancel", endDrag);
+  deck.addEventListener("keydown", function (e) { if (e.key === "ArrowLeft") { e.preventDefault(); throwCard(-1); } else if (e.key === "ArrowRight") { e.preventDefault(); throwCard(1); } });
+  $("throw-l").addEventListener("click", function () { throwCard(-1); }); $("throw-r").addEventListener("click", function () { throwCard(1); });
+  window.addEventListener("pagehide", function () { deckTimers.forEach(clearTimeout); }); renderDeck("none");
+
+  /* ---------- ticker ---------- */
+  var tk = $("ticker"), tkTrack = $("ticker-track"), tkX = $("ticker-x"), tkDone = false, tkRaf = 0;
+  (function () {
+    var seq = "HANDPAN ♥ HANGORA ♥ ATEMPO ♥ ".split("");
+    for (var h = 0; h < 2; h++) {
+      var half = document.createElement("span"); half.className = "ticker-half";
+      for (var u = 0; u < 4; u++) seq.forEach(function (g) { var s = document.createElement("span"); if (g === "♥") { s.className = "ch heart"; s.textContent = "♥︎"; } else { s.className = "ch"; s.textContent = g; } half.appendChild(s); });
+      tkTrack.appendChild(half);
+    }
+  })();
+  tk.addEventListener("click", function (e) {
+    if (tkDone || reduce || (e.target.closest && e.target.closest("#ticker-x"))) return;
+    var vw = window.innerWidth, hs = tkTrack.querySelectorAll(".heart");
+    for (var i = 0; i < hs.length; i++) { var r = hs[i].getBoundingClientRect(); if (r.right < 0 || r.left > vw) continue; var dx = Math.abs(r.left + r.width / 2 - e.clientX);
+      hs[i].animate([{ scale: "1" }, { scale: "1.8" }], { duration: 140, iterations: 2, direction: "alternate", delay: dx / 1600 * 1000, easing: "ease-in-out" }); }
+  });
+  tkX.addEventListener("click", function () {
+    if (tkDone) return; tkDone = true; if (reduce) { tk.hidden = true; return; }
+    tk.classList.add("is-falling"); tkTrack.style.animationPlayState = "paused";
+    var vw = window.innerWidth, pieces = [], chs = tkTrack.querySelectorAll(".ch");
+    for (var i = 0; i < chs.length; i++) { var r = chs[i].getBoundingClientRect(); if (r.right < 0 || r.left > vw || chs[i].textContent.trim() === "") continue;
+      var v = 30 + Math.random() * 150, a = (60 + Math.random() * 60) * Math.PI / 180; pieces.push({ el: chs[i], vx: Math.cos(a) * v, vy: Math.sin(a) * v, rot: (Math.random() * 2 - 1) * 220, delay: Math.random() * 0.12 }); }
+    var t0 = performance.now();
+    function fall(now) {
+      var t = (now - t0) / 1000;
+      for (var j = 0; j < pieces.length; j++) { var p = pieces[j], tt = Math.max(0, t - p.delay);
+        p.el.style.transform = "translate(" + (p.vx * tt) + "px," + (p.vy * tt + 450 * tt * tt) + "px) rotate(" + (p.rot * Math.min(1, tt / 1.4)) + "deg)"; p.el.style.opacity = String(1 - clamp((tt - 1.2) / 0.3)); }
+      if (t < 1.6) tkRaf = requestAnimationFrame(fall); else tk.hidden = true;
+    }
+    tkRaf = requestAnimationFrame(fall);
+  });
+  window.addEventListener("pagehide", function () { cancelAnimationFrame(tkRaf); });
+
+  /* ---------- stacked cards + unfolding panel ---------- */
+  var swr = [].slice.call(document.querySelectorAll(".scard-w")), scd = swr.map(function (w) { return w.firstElementChild; });
+  function updateStack() {
+    if (reduce) return;
+    for (var i = 0; i < swr.length; i++) {
+      var p = 0;
+      if (i < swr.length - 1) {
+        var top = swr[i].getBoundingClientRect().top, nt = swr[i + 1].getBoundingClientRect().top, h = scd[i].offsetHeight;
+        p = clamp(1 - (nt - top - 18) / (h * 0.9));
+      }
+      scd[i].style.transform = "scale(" + (1 - 0.05 * p).toFixed(4) + ")"; scd[i].style.filter = "brightness(" + (1 - 0.35 * p).toFixed(3) + ")";
+    }
+  }
+  var unf = $("valeurs"), unfP = unf.querySelector(".unfold-panel"), unfT = unf.querySelector(".unfold-text");
+  function updateUnfold() {
+    if (reduce) { unfT.style.opacity = 1; return; }
+    var r = unf.getBoundingClientRect(), vh = window.innerHeight, p = clamp((vh - r.top) / Math.max(1, r.height));
+    unfP.style.transform = "translateY(" + (-(1 - p) * r.height).toFixed(1) + "px)"; unfT.style.opacity = sm(norm(p, 0.55, 0.9)).toFixed(3);
+  }
+
+  /* ---------- background inlays: ghost words, notes, sound arcs, 3D handpan, emojis ---------- */
+  var ghosts = [], blocks = [], notes = [], vw0 = 0, vh0 = 0;
+  [["VIBRATION HANDPAN ", 8, -0.1], ["RESPIRE ÉCOUTE ", 62, 0.08]].forEach(function (g) {
+    var el = document.createElement("div"); el.className = "ghost"; el.textContent = new Array(9).join(g[0]); el.style.top = g[1] + "%";
+    decor.appendChild(el); ghosts.push({ el: el, sp: g[2], W: 0 });
+  });
+  [{ row: 0, x0: 0.04, sp: -0.03, w: 0.26 }].forEach(function (b) {
+    var el = document.createElement("div"); el.className = "ghost-block"; decor.appendChild(el); b.el = el; blocks.push(b);
+  });
+  var arcWrap = document.createElement("div");
+  arcWrap.innerHTML = '<svg class="arcs" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">' +
+    '<path d="M-5 74 Q 40 50 105 66" stroke="currentColor" stroke-width="4" style="color:var(--fg);opacity:.09"/>' +
+    '<path d="M-5 28 Q 55 8 105 36" stroke="currentColor" stroke-width="3" style="color:var(--accent);opacity:.14"/>' +
+    '</svg>';
+  var arcs = arcWrap.firstChild; decor.appendChild(arcs);
+  var NOTE_SVG = {
+    a: '<circle cx="26" cy="78" r="12"/><circle cx="72" cy="66" r="12"/><path d="M38 78V26L84 14V66M38 40L84 28"/>',
+    b: '<circle cx="30" cy="78" r="13"/><path d="M43 78V16C62 24 72 38 66 56"/>'
+  };
+  for (var ni = 0; ni < 5; ni++) {
+    var nel = document.createElement("div"); nel.className = "note"; var nsz = Math.round(46 + rng(ni * 3 + 2) * 58);
+    nel.innerHTML = '<svg viewBox="0 0 100 100" width="' + nsz + '" height="' + nsz + '" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + NOTE_SVG[ni % 2 ? "a" : "b"] + "</svg>";
+    decor.appendChild(nel); notes.push({ el: nel, x: rng(ni * 3 + 1), y: rng(ni * 7 + 5), spd: 0.03 + rng(ni * 3 + 3) * 0.1, ph: rng(ni + 40) * 6.28 });
+  }
+
+  /* 3D handpan: lathe mesh projected and shaded by hand on a 2D canvas */
+  var pw = document.createElement("div"); pw.className = "pan3d"; var pc = document.createElement("canvas"); pw.appendChild(pc); decor.appendChild(pw);
+  var p3 = pc.getContext("2d"), K3 = 30, SEG3 = 56, PR = [], PY = [], PNR = [], PNY = [], ps = 280;
+  (function () {
+    var k, a, c, s;
+    for (k = 0; k <= K3; k++) { a = -Math.PI / 2 + Math.PI * k / K3; c = Math.cos(a); s = Math.sin(a); PR[k] = Math.pow(Math.max(0, c), 0.72); PY[k] = 0.34 * (s < 0 ? -1 : 1) * Math.pow(Math.abs(s), 0.85); }
+    for (k = 0; k <= K3; k++) { var k0 = Math.max(0, k - 1), k1 = Math.min(K3, k + 1), dr = PR[k1] - PR[k0], dy = PY[k1] - PY[k0], l = Math.hypot(dr, dy) || 1; PNR[k] = dy / l; PNY[k] = -dr / l; }
+  })();
+  var NV = (K3 + 1) * SEG3, MX = new Float32Array(NV), MY = new Float32Array(NV), MZ = new Float32Array(NV), MNX = new Float32Array(NV), MNY = new Float32Array(NV), MNZ = new Float32Array(NV);
+  var TZ = new Float32Array(NV), PSX = new Float32Array(NV), PSY = new Float32Array(NV), RX = new Float32Array(NV), RY = new Float32Array(NV), RZ = new Float32Array(NV);
+  for (var mk2 = 0; mk2 <= K3; mk2++) for (var mi = 0; mi < SEG3; mi++) {
+    var th = mi * 2 * Math.PI / SEG3, vi = mk2 * SEG3 + mi;
+    MX[vi] = PR[mk2] * Math.cos(th); MY[vi] = PY[mk2]; MZ[vi] = PR[mk2] * Math.sin(th); MNX[vi] = PNR[mk2] * Math.cos(th); MNY[vi] = PNY[mk2]; MNZ[vi] = PNR[mk2] * Math.sin(th);
+  }
+  function ytop(r) { return 0.34 * Math.pow(Math.sin(Math.acos(Math.pow(Math.min(0.999, r), 1 / 0.72))), 0.85); }
+  var FLD = [];
+  (function () {
+    for (var j = 0; j < 9; j++) {
+      var th = (j - 1) * Math.PI / 4 + 0.2, rc = j ? 0.55 : 0, er = j ? 0.13 : 0.22, et = j ? 0.17 : 0.22, ux = Math.cos(th), uz = Math.sin(th), cx = rc * ux, cz = rc * uz;
+      function ring(sc, lift) {
+        var pts = []; for (var q = 0; q < 22; q++) { var ph = q / 22 * Math.PI * 2, x = cx + ux * er * sc * Math.cos(ph) - uz * et * sc * Math.sin(ph), z = cz + uz * er * sc * Math.cos(ph) + ux * et * sc * Math.sin(ph); pts.push([x, ytop(Math.hypot(x, z)) + lift, z]); }
+        return pts;
+      }
+      var e = 0.01, sl = (ytop(rc + e) - ytop(Math.max(0, rc - e))) / (rc ? 2 * e : e * 2), nl = Math.hypot(sl, 1), nr = -sl / nl, ny = 1 / nl;
+      FLD.push({ outer: ring(1, 0.006), inner: ring(0.55, 0.01), n: [nr * (rc ? ux : 0), ny, nr * (rc ? uz : 0)], flash: 0 });
+    }
+  })();
+  var LV = [-0.5, 0.7, -0.7], LL = Math.hypot(LV[0], LV[1], LV[2]); LV = [LV[0] / LL, LV[1] / LL, LV[2] / LL];
+  var HV = [LV[0], LV[1], LV[2] - 1], HL = Math.hypot(HV[0], HV[1], HV[2]); HV = [HV[0] / HL, HV[1] / HL, HV[2] / HL];
+  function shade3(nx, ny, nz, k) {
+    var d = Math.max(0, nx * LV[0] + ny * LV[1] + nz * LV[2]), h = Math.max(0, nx * HV[0] + ny * HV[1] + nz * HV[2]), sp = Math.pow(h, 36);
+    var dot = -nz, rx = 2 * dot * nx, ry = 2 * dot * ny, env = clamp(ry * 0.5 + 0.5), rim = Math.pow(1 - Math.abs(nz), 3);
+    var sb = Math.pow(clamp(1 - Math.hypot(rx - 0.25, ry - 0.7) * 2.2), 2) * 70, base = 0.3 + 0.7 * d;
+    return "rgb(" + Math.round(clamp((36 * base + env * 26 + sp * 170 + rim * 22 + sb) * k, 0, 255)) + "," + Math.round(clamp((40 * base + env * 30 + sp * 170 + rim * 24 + sb) * k, 0, 255)) + "," + Math.round(clamp((50 * base + env * 40 + sp * 180 + rim * 32 + sb) * k, 0, 255)) + ")";
+  }
+  function renderPan(yaw, tilt) {
+    var c = p3, S = pc.width, U = S * 0.43, cx = S / 2, cy = S / 2, D = 3.4;
+    c.setTransform(1, 0, 0, 1, 0, 0); c.clearRect(0, 0, S, S);
+    var g = c.createRadialGradient(cx, cy + U * 1.02, 2, cx, cy + U * 1.02, U * 0.95); g.addColorStop(0, "rgba(0,0,0,0.32)"); g.addColorStop(1, "rgba(0,0,0,0)");
+    c.save(); c.translate(0, 0); c.scale(1, 0.22); c.translate(0, (cy + U * 1.02) / 0.22 - (cy + U * 1.02)); c.fillStyle = g; c.beginPath(); c.arc(cx, cy + U * 1.02, U * 0.95, 0, 6.283); c.fill(); c.restore();
+    var cyw = Math.cos(yaw), syw = Math.sin(yaw), ct = Math.cos(tilt), st = Math.sin(tilt), v;
+    for (v = 0; v < NV; v++) {
+      var x = MX[v], y = MY[v], z = MZ[v], x1 = x * cyw + z * syw, z1 = -x * syw + z * cyw, y2 = y * ct - z1 * st, z2 = y * st + z1 * ct, f = D / (D + z2);
+      TZ[v] = z2; PSX[v] = cx + x1 * U * f; PSY[v] = cy - y2 * U * f;
+      var nx = MNX[v], ny = MNY[v], nz = MNZ[v], nx1 = nx * cyw + nz * syw, nz1 = -nx * syw + nz * cyw; RX[v] = nx1; RY[v] = ny * ct - nz1 * st; RZ[v] = ny * st + nz1 * ct;
+    }
+    var vis = [], QD = {}, k, i;
+    for (k = 0; k < K3; k++) for (i = 0; i < SEG3; i++) {
+      var a = k * SEG3 + i, b = k * SEG3 + (i + 1) % SEG3, c2 = (k + 1) * SEG3 + (i + 1) % SEG3, d2 = (k + 1) * SEG3 + i, nzs = RZ[a] + RZ[b] + RZ[c2] + RZ[d2];
+      if (nzs > 0.05) continue; QD[a] = TZ[a] + TZ[b] + TZ[c2] + TZ[d2]; vis.push(a);
+    }
+    vis.sort(function (p, q) { return QD[q] - QD[p]; });
+    c.lineWidth = 0.7; c.lineJoin = "round";
+    for (var qi = 0; qi < vis.length; qi++) {
+      var a2 = vis[qi], kk = (a2 / SEG3) | 0, ii = a2 - kk * SEG3, b2 = kk * SEG3 + (ii + 1) % SEG3, cc = (kk + 1) * SEG3 + (ii + 1) % SEG3, dd = (kk + 1) * SEG3 + ii;
+      var qnx = RX[a2] + RX[b2] + RX[cc] + RX[dd], qny = RY[a2] + RY[b2] + RY[cc] + RY[dd], qnz = RZ[a2] + RZ[b2] + RZ[cc] + RZ[dd], ql = Math.hypot(qnx, qny, qnz) || 1;
+      var col = shade3(qnx / ql, qny / ql, qnz / ql, 1);
+      c.beginPath(); c.moveTo(PSX[a2], PSY[a2]); c.lineTo(PSX[b2], PSY[b2]); c.lineTo(PSX[cc], PSY[cc]); c.lineTo(PSX[dd], PSY[dd]); c.closePath(); c.fillStyle = col; c.strokeStyle = col; c.fill(); c.stroke();
+    }
+    FLD.forEach(function (fl) {
+      var n = fl.n, nx = n[0] * cyw + n[2] * syw, nz1 = -n[0] * syw + n[2] * cyw, rny = n[1] * ct - nz1 * st, rnz = n[1] * st + nz1 * ct;
+      if (rnz > -0.05) return;
+      function poly(pts) {
+        c.beginPath(); pts.forEach(function (p, idx) { var x = p[0], y = p[1], z = p[2], x1 = x * cyw + z * syw, z1 = -x * syw + z * cyw, y2 = y * ct - z1 * st, z2 = y * st + z1 * ct, f = D / (D + z2), sx = cx + x1 * U * f, sy = cy - y2 * U * f; if (idx) c.lineTo(sx, sy); else c.moveTo(sx, sy); }); c.closePath();
+      }
+      poly(fl.outer); c.fillStyle = shade3(nx, rny, rnz, 0.7); c.fill(); c.strokeStyle = "rgba(0,0,0,0.4)"; c.lineWidth = 1.3; c.stroke();
+      poly(fl.inner); c.globalAlpha = 0.55; c.fillStyle = shade3(nx, rny, rnz, 1.25); c.fill(); c.globalAlpha = 1;
+      if (fl.flash > 0.02) { poly(fl.outer); c.fillStyle = "rgba(242,182,50," + (fl.flash * 0.6).toFixed(3) + ")"; c.fill(); }
+      fl.flash *= 0.93;
+    });
+  }
+  var pdpr = 1;
+  function layoutDecor() {
+    vw0 = window.innerWidth; vh0 = window.innerHeight;
+    ghosts.forEach(function (g) { g.W = g.el.offsetWidth; });
+    blocks.forEach(function (b) { var g = ghosts[b.row].el; b.el.style.width = Math.round(vw0 * b.w) + "px"; b.el.style.height = Math.round(g.offsetHeight * 0.8) + "px"; b.el.style.top = (g.offsetTop + g.offsetHeight * 0.1) + "px"; });
+    ps = clamp(vw0 * 0.2, 170, 270); pdpr = Math.min(2, window.devicePixelRatio || 1);
+    pc.width = Math.round(ps * pdpr); pc.height = Math.round(ps * pdpr); pw.style.width = pw.style.height = ps + "px";
+  }
+  var panStep = -1;
+  function updateDecor(now) {
+    var vw = window.innerWidth, vh = window.innerHeight; if (vw !== vw0 || vh !== vh0) layoutDecor();
+    var sy = reduce ? 0 : window.scrollY, t = reduce ? 0 : now / 1000, i;
+    var wr = work.getBoundingClientRect(), hk = clamp((vh * 0.9 - wr.top) / (vh * 0.3)) * clamp((wr.bottom - vh * 0.1) / (vh * 0.3));
+    ghosts.forEach(function (g) { g.el.style.opacity = (0.045 * (1 - hk)).toFixed(4); var tx = g.sp < 0 ? sy * g.sp : Math.min(0, -(g.W - vw) + sy * g.sp); g.el.style.transform = "translate3d(" + tx.toFixed(1) + "px,0,0)"; });
+    blocks.forEach(function (b) { b.el.style.opacity = (0.1 * (1 - hk)).toFixed(4); b.el.style.transform = "translate3d(" + (vw * b.x0 + sy * b.sp).toFixed(1) + "px,0,0)"; });
+    arcs.style.transform = "translate3d(0," + (Math.sin(sy / 900) * 18).toFixed(1) + "px,0)"; arcs.style.opacity = (1 - hk).toFixed(3);
+    var per = vh + 200;
+    for (i = 0; i < notes.length; i++) {
+      var n = notes[i], y = (((n.y * per - sy * n.spd - t * 8) % per) + per) % per - 100, x = n.x * (vw - 60) + Math.sin(sy * 0.0018 + n.ph + t * 0.4) * 26;
+      n.el.style.opacity = (0.16 * (1 - hk)).toFixed(3);
+      n.el.style.transform = "translate3d(" + x.toFixed(1) + "px," + y.toFixed(1) + "px,0) rotate(" + (Math.sin(sy * 0.002 + n.ph) * 16).toFixed(1) + "deg)";
+    }
+    var ir = $("instrument").getBoundingClientRect(), ar = $("atempo").getBoundingClientRect();
+    var fade = Math.min(clamp((vh * 0.85 - ir.top) / (vh * 0.35)), clamp((ar.bottom - vh * 0.2) / (vh * 0.35)));
+    pw.style.opacity = (0.45 * fade).toFixed(3);
+    if (fade < 0.02 || document.hidden) return;
+    var amp = (vw / 2 - ps / 2 - 10) * 0.5, px = reduce ? vw - ps - 8 : vw / 2 + Math.sin(sy / 900 + 0.5) * amp - ps / 2;
+    var py = reduce ? vh - ps - 24 : vh * 0.5 - ps / 2 + Math.sin(t * 0.6) * 10;
+    pw.style.transform = "translate3d(" + px.toFixed(1) + "px," + py.toFixed(1) + "px,0)";
+    var step = Math.floor(sy / 140); if (step !== panStep) { panStep = step; FLD[((step % 9) + 9) % 9].flash = 1; }
+    renderPan(reduce ? 0.6 : sy * 0.003 + t * 0.12, -(0.85 + (reduce ? 0 : 0.25 * Math.sin(sy / 520))));
+  }
+  layoutDecor();
+
+  /* emojis that rush across and vanish now and then */
+  var EMO = ["❤️", "😍", "🥰", "😻", "💛", "🎶", "✨", "💖"];
+  function spawnEmoji() {
+    var el = document.createElement("span"); el.className = "emo"; el.setAttribute("aria-hidden", "true"); el.textContent = EMO[Math.floor(Math.random() * EMO.length)];
+    var fs = 26 + Math.random() * 30, vw = window.innerWidth, vh = window.innerHeight, fromRight = Math.random() < 0.5;
+    el.style.fontSize = fs + "px"; el.style.top = (vh * (0.12 + 0.76 * Math.random())) + "px"; el.style.left = (fromRight ? vw + 20 : -fs - 20) + "px"; document.body.appendChild(el);
+    var dx = (fromRight ? -1 : 1) * (vw + fs * 2 + 60), dy = (Math.random() - 0.5) * vh * 0.35, rot = (Math.random() - 0.5) * 60;
+    var an = el.animate([{ transform: "translate(0,0) rotate(0deg)", opacity: 0 }, { opacity: 1, offset: 0.12 }, { opacity: 1, offset: 0.78 }, { transform: "translate(" + dx + "px," + dy + "px) rotate(" + rot + "deg)", opacity: 0 }],
+      { duration: 1500 + Math.random() * 1400, easing: "cubic-bezier(0.35, 0.05, 0.55, 1)", fill: "forwards" });
+    an.onfinish = function () { el.remove(); };
+  }
+  function emojiBurst(n) { for (var i = 0; i < n; i++) setTimeout(spawnEmoji, i * 180); }
+  var lastBurst = 0, lastSy = window.scrollY, lastT = performance.now();
+  if (!reduce) {
+    (function schedule() { setTimeout(function () { if (!document.hidden && work.getBoundingClientRect().bottom < 0) { emojiBurst(1); lastBurst = performance.now(); } schedule(); }, 20000 + Math.random() * 15000); })();
+  }
+
+  /* ---------- loop ---------- */
+  function updateHud(p) {
+    hint.style.opacity = reduce ? 0 : String(1 - norm(p, 0.02, 0.1)); sub.style.opacity = reduce ? 0.9 : String(1 - norm(p, 0.1, 0.3));
+    var show = reduce || p > 0.78; if (ctl.hidden === show) ctl.hidden = !show;
+  }
+  var vis = { scene: true }, last = performance.now();
+  try { new IntersectionObserver(function (es) { es.forEach(function (en) { vis.scene = en.isIntersecting; }); }).observe(scene); } catch (e) {}
+  function frame(now) {
+    var dt = Math.min(0.1, (now - last) / 1000); last = now;
+    if (playing) heroT += dt;
+    var target = reduce ? 0.62 : progress(); cur += (target - cur) * (1 - Math.exp(-dt * 9)); if (Math.abs(target - cur) < 0.0005) cur = target;
+    if (vis.scene) drawScene(cur);
+    updateHud(cur); updateWork(); updateChaos(); updateDecode(); updateTw(); updateCards(dt); updateStack(); updateUnfold(); updateDecor(now);
+    requestAnimationFrame(frame);
+  }
+  try { new ResizeObserver(resize).observe(stage); } catch (e) { window.addEventListener("resize", resize); }
+  window.addEventListener("resize", resize);
+  var fontsReady = Promise.all([
+    document.fonts.load('800 40px "Bricolage Grotesque"'), document.fonts.load('400 17px "Bricolage Grotesque"'),
+    document.fonts.load('400 40px "Reenie Beanie"'), document.fonts.load('400 12px "DM Mono"')
+  ]).catch(function () {}).then(function () { return document.fonts.ready; });
+  fontsReady.then(function () { fixDecodeWidths(); decReady = true; shadows.forEach(buildShadow); dirtyAll(); tears.forEach(function (f, i) { buildTear(f, i); }); });
+  resize(); requestAnimationFrame(frame);
+})();
+</script>
+
+</body></html>
