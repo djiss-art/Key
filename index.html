@@ -164,12 +164,12 @@ a.pill:hover { border-color: var(--accent); }
 .unfold .pillars strong { font-size: clamp(20px, 2.6vw, 28px); }
 
 /* ---------- instrument ---------- */
-.pan { position: relative; width: min(100%, 440px); aspect-ratio: 1; margin: 0 auto; border-radius: 50%; touch-action: none; user-select: none; -webkit-user-select: none;
+.pan { position: relative; container-type: inline-size; width: min(100%, 440px); aspect-ratio: 1; margin: 0 auto; border-radius: 50%; touch-action: none; user-select: none; -webkit-user-select: none;
   background: radial-gradient(circle at 35% 28%, #6c7077 0%, #34373d 46%, #1a1c20 100%); box-shadow: 0 24px 50px rgba(0, 0, 0, 0.5), inset 0 0 0 6px #23252a, inset 0 0 0 8px #565a62; }
-.tf { position: absolute; transform: translate(-50%, -50%); border: 0; padding: 0; cursor: pointer; border-radius: 50%; width: 21%; aspect-ratio: 1.12; color: #E9E4D8;
+.tf { position: absolute; transform: translate(-50%, -50%); border: 0; padding: 0; cursor: pointer; border-radius: 50%; width: 21%; height: 21%; color: #E9E4D8;
   background: radial-gradient(circle at 38% 30%, #8a8f97 0%, #4b4f56 55%, #2a2c31 100%); box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.6), 0 1px 0 rgba(255, 255, 255, 0.25);
-  font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.04em; display: grid; place-items: center; touch-action: none; }
-.tf.ding { width: 27%; aspect-ratio: 1; }
+  font-family: var(--font-mono); font-size: clamp(9px, 2.7cqw, 13px); letter-spacing: 0.02em; display: grid; place-items: center; touch-action: none; }
+.tf.ding { font-size: clamp(11px, 3.4cqw, 15px); }
 .tf:hover { filter: brightness(1.18); }
 @keyframes hit { 0% { box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.6), 0 0 0 0 rgba(242, 182, 50, 0.85); transform: translate(-50%, -50%) scale(0.94); }
   100% { box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.6), 0 0 0 26px rgba(242, 182, 50, 0); transform: translate(-50%, -50%) scale(1); } }
@@ -422,9 +422,9 @@ html { scrollbar-color: color-mix(in srgb, var(--fg) 35%, transparent) transpare
     <div class="col">
       <h2 id="inst-title" class="st">Une note suffit</h2>
       <p class="lede">Un handpan, neuf notes, rien à réussir. Pose les doigts et écoute ce que ça fait.</p>
-      <p class="small" id="note-name">Ré kurd · 9 notes</p>
+      <p class="small" id="note-name">Mi mineur · 9 notes</p>
     </div>
-    <div class="pan" id="pan" role="group" aria-label="Handpan en ré kurd, neuf notes"></div>
+    <div class="pan" id="pan" role="group" aria-label="Handpan en mi mineur, neuf notes"></div>
   </div>
 </section>
 
@@ -655,7 +655,7 @@ html { scrollbar-color: color-mix(in srgb, var(--fg) 35%, transparent) transpare
 
   /* ---------- handpan sound ---------- */
   var AC = null, master = null;
-  var SCALE = [146.83, 220, 233.08, 261.63, 293.66, 329.63, 349.23, 392, 440], NAMES = ["D3", "A3", "Bb3", "C4", "D4", "E4", "F4", "G4", "A4"];
+  var SCALE = [164.81, 246.94, 261.63, 293.66, 329.63, 369.99, 392, 440, 493.88], NAMES = ["Mi3", "Si3", "Do4", "Ré4", "Mi4", "Fa#4", "Sol4", "La4", "Si4"];
   function ensureAudio() {
     if (AC) { if (AC.state === "suspended") AC.resume(); return true; }
     try {
@@ -910,7 +910,7 @@ html { scrollbar-color: color-mix(in srgb, var(--fg) 35%, transparent) transpare
     var canHover = window.matchMedia && matchMedia("(hover: hover) and (pointer: fine)").matches;
     function reset(c) { var v = c.querySelector("video"); v.pause(); v.controls = false; v.muted = true; v.loop = true; c.classList.remove("prev", "manual"); v.load(); }
     function startAt(v, t, onOk) { v.preload = "auto"; var seek = function () { try { v.currentTime = t; } catch (e) {} }; if (v.readyState >= 1) seek(); else v.addEventListener("loadedmetadata", seek, { once: true }); var pr = v.play(); if (pr && pr.then) pr.then(onOk || function () {}, function () { if (onOk === undefined) return; v.muted = true; var p2 = v.play(); if (p2 && p2.catch) p2.catch(function () {}); }); }
-    function preview(c) { if (reduce || !canHover || c.classList.contains("manual")) return; var v = c.querySelector("video"); v.muted = true; v.loop = true; c.classList.add("prev"); startAt(v, parseFloat(c.getAttribute("data-start")) || 0); }
+    function preview(c) { if (reduce || !canHover || c.classList.contains("manual")) return; if (cards.some(function (o) { return o !== c && o.classList.contains("manual"); })) return; cards.forEach(function (o) { if (o !== c) reset(o); }); var v = c.querySelector("video"); v.loop = true; v.volume = 0.85; v.muted = false; c.classList.add("prev"); startAt(v, parseFloat(c.getAttribute("data-start")) || 0, function () { if (!v.muted && typeof stopMusic === "function") stopMusic(); }); }
     function unpreview(c) { if (c.classList.contains("manual")) return; reset(c); }
     function play(c) {
       cards.forEach(function (o) { if (o !== c) reset(o); });
@@ -1177,11 +1177,23 @@ html { scrollbar-color: color-mix(in srgb, var(--fg) 35%, transparent) transpare
 
   /* ---------- instrument ---------- */
   var pan = $("pan"), noteEl = $("note-name"), tfs = [];
+  /* layout copied from a real E minor handpan: each note has its own size and tilt, none touch (values in % of the pan) */
+  var LAY = [
+    { x: 48.2, y: 47.3, w: 36, h: 28, r: 0 },      /* Mi3, the ding */
+    { x: 65, y: 79.5, w: 31, h: 26, r: -8 },       /* Si3 */
+    { x: 25.5, y: 78, w: 27, h: 29, r: 8 },        /* Do4 */
+    { x: 85, y: 50.5, w: 21, h: 27, r: 0 },        /* Ré4 */
+    { x: 14.5, y: 46.5, w: 19, h: 23, r: 0 },      /* Mi4 */
+    { x: 75.5, y: 25, w: 19, h: 17, r: -32 },      /* Fa#4 */
+    { x: 23, y: 25, w: 16.5, h: 19.5, r: 28 }, /* Sol4 */
+    { x: 58.5, y: 11, w: 13.5, h: 16.5, r: -10 },      /* La4 */
+    { x: 41.5, y: 10.5, w: 12.5, h: 16, r: 10 }      /* Si4 */
+  ];
   (function () {
     for (var i = 0; i < 9; i++) {
       var b = document.createElement("button"); b.type = "button"; b.className = "tf" + (i === 0 ? " ding" : ""); b.setAttribute("data-i", i);
       b.setAttribute("aria-label", "Note " + NAMES[i] + ", touche " + (i + 1)); b.textContent = NAMES[i];
-      if (i === 0) { b.style.left = "50%"; b.style.top = "52%"; } else { var a = (-112.5 + (i - 1) * 45) * Math.PI / 180; b.style.left = (50 + 36 * Math.cos(a)) + "%"; b.style.top = (50 + 36 * Math.sin(a)) + "%"; }
+      var L = LAY[i]; b.style.left = L.x + "%"; b.style.top = L.y + "%"; b.style.width = L.w + "%"; b.style.height = L.h + "%"; if (L.r) b.style.rotate = L.r + "deg";
       pan.appendChild(b); tfs.push(b);
     }
   })();
